@@ -13,7 +13,7 @@ type envVals struct {
 	level    zapcore.Level
 }
 
-// getEnv Loggerに関する設定を環境変数から取得
+// getEnv
 func getEnv() (*envVals, error) {
 	res := new(envVals)
 

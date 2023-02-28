@@ -21,6 +21,6 @@ func (b BookRouter) routing(e *gin.RouterGroup) {
 	}
 }
 
-func NewBookRouter(bc *v1.BookController) Router {
+func CreateBookRouter(bc *v1.BookController) Router {
 	return &BookRouter{bc: bc}
 }

@@ -1,12 +1,27 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
-type AuthController interface {
-	Login(c *gin.Context)
-	Logout(c *gin.Context)
-	Refresh(c *gin.Context)
-	Me(c *gin.Context)
+type AuthController struct {
+}
+
+func CreateAuthController() *AuthController {
+	fmt.Println("Create auth controller")
+	return &AuthController{}
+}
+
+func (ac *AuthController) Login() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"data": "Login router"})
+	}
+}
+
+func (ac *AuthController) Register() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"data": "Register router"})
+	}
 }

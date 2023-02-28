@@ -19,7 +19,7 @@ func RegisterDIFunction() *dig.Container {
 
 	registerTransaction(c)
 	registerRepository(c)
-	registerUsecase(c)
+	registerService(c)
 	registerController(c)
 	registerRouter(c)
 
@@ -44,17 +44,19 @@ func registerRepository(c *dig.Container) {
 	errors = append(errors, c.Provide(persistence.CreateBookRepository))
 }
 
-func registerUsecase(c *dig.Container) {
+func registerService(c *dig.Container) {
 	errors = append(errors, c.Provide(services.CreateBookService))
 }
 
 func registerController(c *dig.Container) {
 	errors = append(errors, c.Provide(v1.CreateBookController))
+	errors = append(errors, c.Provide(v1.CreateAuthController))
 }
 
 func registerRouter(c *dig.Container) {
 
-	errors = append(errors, c.Provide(routers.NewBookRouter, dig.Name("book")))
+	errors = append(errors, c.Provide(routers.CreateBookRouter, dig.Name("book")))
+	errors = append(errors, c.Provide(routers.CreateAuthRouter, dig.Name("auth")))
 
 	// RouterService
 	errors = append(errors, c.Provide(routers.NewService))

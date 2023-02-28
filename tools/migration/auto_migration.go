@@ -20,8 +20,12 @@ func main() {
 	db := repositories.GetConn()
 
 	if db != nil {
-		db.Debug().AutoMigrate(
+		err := db.Debug().AutoMigrate(
 			&entities.BookEnt{},
+			&entities.UserEnt{},
 		)
+		if err != nil {
+			return
+		}
 	}
 }
