@@ -2,7 +2,6 @@ package book
 
 import (
 	"english_exam_go/infrastructure/data/entities"
-	"gorm.io/gorm"
 	"time"
 )
 
@@ -32,7 +31,6 @@ func CreateResponseBook(ent entities.BookEnt) *ResponseBook {
 func NewBookEnt(request *RequestBook) (entities.BookEnt, error) {
 	// validate
 	return entities.BookEnt{
-		Model:   gorm.Model{},
 		Title:   request.Title,
 		Content: request.Content,
 	}, nil

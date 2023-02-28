@@ -33,6 +33,7 @@ func (bc *BookController) CreateBook() gin.HandlerFunc {
 		if err != nil {
 			fmt.Printf("Error database : %s", err.Error())
 			exception.Handle(err, c)
+			return
 		}
 		http_utils.CreatedHandle(c)
 	}

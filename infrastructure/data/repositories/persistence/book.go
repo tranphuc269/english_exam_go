@@ -2,11 +2,13 @@ package persistence
 
 import (
 	"context"
+	"encoding/json"
 	"english_exam_go/infrastructure/data/entities"
 	"english_exam_go/infrastructure/data/repositories"
-	"english_exam_go/utils/app_logger"
 	"fmt"
 )
+
+const bookTables = "book_ents"
 
 type IBookRepository interface {
 	CreateBook(context.Context, *entities.BookEnt) error
@@ -21,29 +23,33 @@ type BookRepositoryImpl struct {
 
 func (br BookRepositoryImpl) CreateBook(ctx context.Context, ent *entities.BookEnt) error {
 	//TODO implement me
-	app_logger.Logger.Error(ent.Content)
-	//db, _ := repositories.GetTx(ctx)
-	//if result := db.Create(ent); result.Error != nil {
-	//	return &repositories.RdbRuntimeError{
-	//		ErrMsg:        fmt.Sprintf("[infrastructure.data.repositories.persistence.CreateBook] fail to insert Book to Database"),
-	//		OriginalError: result.Error,
-	//	}
-	//}
+	db, _ := repositories.GetTx(ctx)
+	//db := repositories.GetConn()
+	result := db.Create(ent)
+	if result.Error != nil {
+		return &repositories.RdbRuntimeError{
+			ErrMsg:        fmt.Sprintf("[infrastructure.data.repositories.persistence.CreateBook] fail to insert Book to Database"),
+			OriginalError: result.Error,
+		}
+	}
 	return nil
 }
 
 func (br BookRepositoryImpl) FindBook(ctx context.Context, ID uint) (*entities.BookEnt, error) {
 	//TODO implement me
-	db := repositories.GetConn()
+	db := repositories.GetConn().Table(bookTables)
 	bookEnt := &entities.BookEnt{}
-	if err := db.First(bookEnt, "id=?", ID); err != nil {
+
+	err := db.Take(&bookEnt, "id=?", ID)
+	if err != nil {
+		fmt.Printf("err : %s", err.Error)
 		return nil, &repositories.NotFoundError{
 			Msg:           repositories.DefaultNotFoundMsg,
 			ErrMsg:        fmt.Sprintf("[infrastructure.data.repositories.persistence.FindBook] failed to find bookEnt from rdb. ID : %d", ID),
-			OriginalError: nil,
+			OriginalError: err.Error,
 		}
 	}
-	return bookEnt, nil
+	return bookEnt, err.Error
 }
 
 func (br BookRepositoryImpl) FindBooks(ctx context.Context) ([]*entities.BookEnt, error) {
@@ -63,9 +69,12 @@ func (br BookRepositoryImpl) FindBooks(ctx context.Context) ([]*entities.BookEnt
 
 func (br BookRepositoryImpl) UpdateBook(ctx context.Context, requestBook *entities.BookEnt) error {
 	//TODO implement me
-	db, _ := repositories.GetTx(ctx)
-	updatedAt := requestBook.UpdatedAt
-	result := db.Where("updated_at <= ?", updatedAt).Model(&requestBook).Updates(requestBook)
+	db := repositories.GetConn()
+	b, _ := json.Marshal(requestBook)
+	fmt.Printf("entity update : %s", b)
+	//db, _ := repositories.GetTx(ctx)
+
+	result := db.Model(&requestBook).Updates(requestBook)
 	if result.Error != nil {
 		return &repositories.RdbRuntimeError{
 			ErrMsg:        fmt.Sprintf("[[infrastructure.data.repositories.persistence.UpdateBook] failed to update Book in RDB. ID : %d", requestBook.ID),
@@ -91,7 +100,7 @@ func (br BookRepositoryImpl) DeleteBook(ctx context.Context, ID uint) error {
 		}
 	} else if result.RowsAffected == 0 {
 		return &repositories.NotFoundError{
-			Msg:           "削除対象の本が見つかりませんでした。その本は既に削除されている可能性があります。",
+			Msg:           "The book to be deleted was not found. The book may have already been deleted.",
 			ErrMsg:        fmt.Sprintf("[infrastructure.persistence.DeleteBook] failed to delete Book in RDB. Record not found. ID : %d", ID),
 			OriginalError: nil,
 		}

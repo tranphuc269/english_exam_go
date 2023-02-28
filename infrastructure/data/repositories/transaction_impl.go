@@ -4,6 +4,7 @@ import (
 	"context"
 	"english_exam_go/utils/app_logger"
 	"english_exam_go/utils/transaction"
+	"fmt"
 	"gorm.io/gorm"
 )
 
@@ -14,8 +15,11 @@ const txKey TxCtxKey = "TRANSACTION_CONTEXT_ATTRIBUTE_KEY"
 type txImpl struct {
 }
 
-func (t *txImpl) Required(ctx context.Context, txFunc func(ctx context.Context) (interface{}, error)) (data interface{}, err error) {
-
+func (t *txImpl) Required(ctx context.Context,
+	txFunc func(ctx context.Context) (interface{},
+		error)) (data interface{},
+	err error) {
+	fmt.Printf("Begin transaction")
 	tx := GetConn().Begin()
 	if tx.Error != nil {
 		return nil, &RdbRuntimeError{

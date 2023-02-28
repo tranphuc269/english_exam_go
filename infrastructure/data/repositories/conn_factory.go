@@ -4,6 +4,7 @@ import (
 	"english_exam_go/utils/app_logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"os"
 	"strconv"
 	"time"
@@ -28,7 +29,8 @@ func OpenDatabase() {
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
 		PrepareStmt:            true,
 		SkipDefaultTransaction: true,
-		Logger:                 app_logger.Default,
+		//Logger:                 app_logger.Default,
+		Logger: logger.Default.LogMode(logger.Info),
 	})
 
 	if err != nil {
