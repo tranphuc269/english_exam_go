@@ -46,6 +46,7 @@ func registerRepository(c *dig.Container) {
 
 func registerService(c *dig.Container) {
 	errors = append(errors, c.Provide(services.CreateBookService))
+	errors = append(errors, c.Provide(services.CreateAuthService))
 }
 
 func registerController(c *dig.Container) {

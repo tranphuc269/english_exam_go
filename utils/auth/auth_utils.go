@@ -3,6 +3,7 @@ package auth_utils
 import (
 	"errors"
 	"github.com/dgrijalva/jwt-go"
+	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
@@ -25,7 +26,7 @@ func GenerateJWT(email string, username string) (tokenString string, err error) 
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err = token.SignedString(jwtKey)
-	return
+	return tokenString, err
 }
 func ValidateToken(signedToken string) (err error) {
 	token, err := jwt.ParseWithClaims(
@@ -48,4 +49,12 @@ func ValidateToken(signedToken string) (err error) {
 		return
 	}
 	return
+}
+
+func HashPassword(password string) (response string, err error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
 }

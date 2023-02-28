@@ -27,9 +27,7 @@ func NewService(allRouter AllRouter) *Service {
 }
 
 func (rs *Service) RouterInit(e *gin.RouterGroup) {
-
 	for _, r := range rs.routers {
 		r.routing(e)
 	}
-
 }
