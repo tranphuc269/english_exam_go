@@ -1,11 +1,11 @@
 package v1
 
 import (
+	"english_exam_go/application/http_utils"
+	"english_exam_go/application/http_utils/exception"
 	dtos "english_exam_go/domain/dtos/user"
 	"english_exam_go/domain/services"
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 type AuthController struct {
@@ -13,7 +13,6 @@ type AuthController struct {
 }
 
 func CreateAuthController(as services.IAuthService) *AuthController {
-	fmt.Println("Create auth controller")
 	return &AuthController{as: as}
 }
 
@@ -21,20 +20,30 @@ func (ac *AuthController) Login() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var loginRequest dtos.LoginRequest
 		if err := c.ShouldBindJSON(&loginRequest); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			exception.Handle(err, c)
 			return
 		}
-		token, err := ac.as.Login(c, loginRequest)
+		authRes, err := ac.as.Login(c, loginRequest)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			exception.Handle(err, c)
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"data": token})
+		http_utils.SuccessHandle(*authRes, c)
 	}
 }
 
 func (ac *AuthController) Register() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"data": "Register router"})
+		var registerRequest dtos.RegisterAccountRequest
+		if err := c.ShouldBind(&registerRequest); err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		authRes, err := ac.as.Register(c, registerRequest)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		http_utils.SuccessHandle(*authRes, c)
 	}
 }

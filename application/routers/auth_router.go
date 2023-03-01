@@ -14,6 +14,7 @@ func (ar AuthRouter) routing(e *gin.RouterGroup) {
 	be := e.Group("/auth")
 	{
 		be.POST("/login", ar.ac.Login())
+		be.POST("/register", ar.ac.Register())
 	}
 }
 

@@ -42,6 +42,7 @@ func registerTransaction(c *dig.Container) {
 
 func registerRepository(c *dig.Container) {
 	errors = append(errors, c.Provide(persistence.CreateBookRepository))
+	errors = append(errors, c.Provide(persistence.CreateAuthRepository))
 }
 
 func registerService(c *dig.Container) {
