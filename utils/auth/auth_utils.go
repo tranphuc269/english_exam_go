@@ -1,7 +1,8 @@
-package auth_utils
+package utils
 
 import (
 	"errors"
+	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 	"time"
@@ -29,6 +30,7 @@ func GenerateJWT(email string, username string) (tokenString string, err error) 
 	return tokenString, err
 }
 func ValidateToken(signedToken string) (err error) {
+	fmt.Println(signedToken)
 	token, err := jwt.ParseWithClaims(
 		signedToken,
 		&JWTClaim{},

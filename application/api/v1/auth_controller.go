@@ -47,3 +47,10 @@ func (ac *AuthController) Register() gin.HandlerFunc {
 		http_utils.SuccessHandle(*authRes, c)
 	}
 }
+
+func (ac *AuthController) Ping() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		stringToken := c.GetHeader("Authorization")
+		http_utils.SuccessHandle(stringToken, c)
+	}
+}

@@ -2,6 +2,7 @@ package routers
 
 import (
 	v1 "english_exam_go/application/api/v1"
+	"english_exam_go/application/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,6 +16,10 @@ func (ar AuthRouter) routing(e *gin.RouterGroup) {
 	{
 		be.POST("/login", ar.ac.Login())
 		be.POST("/register", ar.ac.Register())
+		secured := be.Group("/secured").Use(middleware.Authentication())
+		{
+			secured.GET("/ping", ar.ac.Ping())
+		}
 	}
 }
 
