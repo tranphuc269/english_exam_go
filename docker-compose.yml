@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   postgres:
-    container_name: postgres_container_a
+    container_name: postgres_container
     image: postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-admin}
@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
 
   pgadmin:
-    container_name: pgadmin_container_a
+    container_name: pgadmin_container
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
