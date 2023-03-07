@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"log"
+	"net/http"
 	"os"
 	"time"
 )
@@ -76,6 +77,12 @@ func ginInit(mode string) *gin.Engine {
 	}
 
 	r := gin.New()
+
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
 	// gin-zap middleware
 	r.Use(ginzap.Ginzap(app_logger.Logger, time.RFC3339, true))
 	// logging all panic to error log
