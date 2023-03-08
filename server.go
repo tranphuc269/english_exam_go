@@ -6,8 +6,11 @@ import (
 	"english_exam_go/infrastructure/data/repositories"
 	"english_exam_go/utils/app_logger"
 	"english_exam_go/utils/di"
+	"english_exam_go/utils/resource"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 	"log"
 	"net/http"
@@ -26,7 +29,7 @@ func main() {
 	dotEnvInit(mode)
 	app_logger.Init()
 	app_logger.Logger.Debug("Logger init succeeded")
-
+	ginValidation()
 	r := ginInit(mode)
 	app_logger.Logger.Debug("Gin init succeeded")
 
@@ -91,4 +94,20 @@ func ginInit(mode string) *gin.Engine {
 	r.Use(middleware.SetCors())
 
 	return r
+}
+
+func ginValidation() {
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		err := v.RegisterValidation("userRoleEnum", func(fl validator.FieldLevel) bool {
+			switch fl.Field().Interface().(resource.UserRole) {
+			case resource.Admin, resource.Student, resource.Lecturer:
+				return true
+			default:
+				return false
+			}
+		})
+		if err != nil {
+			return
+		}
+	}
 }

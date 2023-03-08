@@ -42,7 +42,6 @@ func (br BookRepositoryImpl) FindBook(ctx context.Context, ID uint) (*entities.B
 
 	err := db.Take(&bookEnt, "id=?", ID)
 	if err != nil {
-		fmt.Printf("err : %s", err.Error)
 		return nil, &repositories.NotFoundError{
 			Msg:           repositories.DefaultNotFoundMsg,
 			ErrMsg:        fmt.Sprintf("[infrastructure.data.repositories.persistence.FindBook] failed to find bookEnt from rdb. ID : %d", ID),

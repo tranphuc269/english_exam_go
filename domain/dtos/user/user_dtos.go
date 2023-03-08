@@ -2,6 +2,8 @@ package dtos
 
 import (
 	"english_exam_go/infrastructure/data/entities"
+	auth_utils "english_exam_go/utils/auth"
+	"english_exam_go/utils/resource"
 	"gorm.io/gorm"
 	"time"
 )
@@ -18,12 +20,22 @@ type AuthResponse struct {
 }
 
 type RegisterAccountRequest struct {
-	Name        string `json:"name"`
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	DateOfBirth string `json:"date_of_birth"`
-	PhoneNumber string `json:"phone_number"`
-	Address     string `json:"address"`
+	Name        string            `json:"name"`
+	Email       string            `json:"email"`
+	Password    string            `json:"password"`
+	DateOfBirth string            `json:"date_of_birth"`
+	PhoneNumber string            `json:"phone_number"`
+	Address     string            `json:"address"`
+	Role        resource.UserRole `json:"role,omitempty" binding:"required,userRoleEnum"`
+}
+
+type UserResponse struct {
+	gorm.Model
+	Name        string    `json:"name"`
+	Email       string    `json:"email"`
+	PhoneNumber string    `json:"phone_number"`
+	Address     string    `json:"address"`
+	DateOfBirth time.Time `json:"date_of_birth"`
 }
 
 func (rar *RegisterAccountRequest) RegisterAccountToUserEnt() (*entities.UserEnt, error) {
@@ -31,13 +43,29 @@ func (rar *RegisterAccountRequest) RegisterAccountToUserEnt() (*entities.UserEnt
 	if err != nil {
 		return nil, err
 	}
+	hashPassword, err := auth_utils.HashPassword(rar.Password)
+	if err != nil {
+		return nil, err
+	}
 	return &entities.UserEnt{
 		Model:       gorm.Model{},
 		Name:        rar.Name,
 		Email:       rar.Email,
-		Password:    rar.Password,
+		Password:    hashPassword,
 		PhoneNumber: rar.PhoneNumber,
 		Address:     rar.Address,
 		DateOfBirth: date,
+		Role:        rar.Role,
 	}, nil
+}
+
+func UserEntToResponse(ue *entities.UserEnt) *UserResponse {
+	return &UserResponse{
+		Model:       ue.Model,
+		Name:        ue.Name,
+		Email:       ue.Email,
+		PhoneNumber: ue.PhoneNumber,
+		Address:     ue.Address,
+		DateOfBirth: ue.DateOfBirth,
+	}
 }

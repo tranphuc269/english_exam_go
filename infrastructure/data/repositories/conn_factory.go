@@ -49,19 +49,15 @@ func connPoolSetting(db *gorm.DB) *gorm.DB {
 		app_logger.Logger.Panic(err.Error())
 	}
 
-	// 確立時からのコネクションを保持する最大時間
 	maxLifeTime, _ := strconv.Atoi(os.Getenv("MAX_LIFE_TIME"))
 	connPoolDB.SetConnMaxLifetime(time.Duration(maxLifeTime) * time.Minute)
 
-	// idle状態のコネクションを保持する最大時間
 	maxIdleTime, _ := strconv.Atoi(os.Getenv("MAX_IDLE_TIME"))
 	connPoolDB.SetConnMaxIdleTime(time.Duration(maxIdleTime) * time.Minute)
 
-	// idle状態のコネクションの最大数
 	maxIdleConns, _ := strconv.Atoi(os.Getenv("MAX_IDLE_CONNS"))
 	connPoolDB.SetMaxIdleConns(maxIdleConns)
 
-	// プール可能なコネクションの最大数
 	maxOpenConns, _ := strconv.Atoi(os.Getenv("MAX_OPEN_CONNS"))
 	connPoolDB.SetMaxOpenConns(maxOpenConns)
 

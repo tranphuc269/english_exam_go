@@ -9,7 +9,7 @@ import (
 
 type IAuthRepository interface {
 	CreateUser(context.Context, *entities.UserEnt) (*entities.UserEnt, error)
-	FindUserById(context.Context, uint) (*entities.UserEnt, error)
+	FindUserByEmail(context.Context, string) (*entities.UserEnt, error)
 }
 
 type AuthRepositoryImpl struct {
@@ -29,22 +29,19 @@ func (ar AuthRepositoryImpl) CreateUser(ctx context.Context, ent *entities.UserE
 	return ent, nil
 }
 
-func (ar AuthRepositoryImpl) FindUserById(ctx context.Context, ID uint) (*entities.UserEnt, error) {
-
+func (ar AuthRepositoryImpl) FindUserByEmail(ctx context.Context, email string) (*entities.UserEnt, error) {
 	db := repositories.GetConn()
 
-	userEnt := &entities.UserEnt{}
-
-	err := db.Take(&userEnt, "id=?", ID)
-
-	if err != nil {
+	userEnt := entities.UserEnt{}
+	err := db.Model(&entities.UserEnt{}).First(&userEnt)
+	if err.Error != nil {
 		return nil, &repositories.NotFoundError{
 			Msg:           repositories.DefaultNotFoundMsg,
-			ErrMsg:        fmt.Sprintf("[infrastructure.data.repositories.persistence.FindUserById] failed to find userEnt from rdb. ID : %d", ID),
+			ErrMsg:        fmt.Sprintf("[infrastructure.data.repositories.persistence.FindUserByEmail] failed to find userEnt from rdb. email : %s", email),
 			OriginalError: err.Error,
 		}
 	}
-	return userEnt, nil
+	return &userEnt, nil
 }
 
 func CreateAuthRepository() IAuthRepository {

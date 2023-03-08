@@ -18,7 +18,7 @@ func (ar AuthRouter) routing(e *gin.RouterGroup) {
 		be.POST("/register", ar.ac.Register())
 		secured := be.Group("/secured").Use(middleware.Authentication())
 		{
-			secured.GET("/ping", ar.ac.Ping())
+			secured.GET("/me", ar.ac.Me())
 		}
 	}
 }

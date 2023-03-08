@@ -7,7 +7,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// RDBのauto migrateを行う
+// RDB auto migrate
 func main() {
 	if err := godotenv.Load(".env"); err != nil {
 		panic("Can not loading .env" + err.Error())

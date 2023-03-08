@@ -5,6 +5,8 @@ import (
 	"english_exam_go/application/http_utils/exception"
 	dtos "english_exam_go/domain/dtos/user"
 	"english_exam_go/domain/services"
+	auth_utils "english_exam_go/utils/auth"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -39,18 +41,30 @@ func (ac *AuthController) Register() gin.HandlerFunc {
 			exception.Handle(err, c)
 			return
 		}
+
 		authRes, err := ac.as.Register(c, registerRequest)
 		if err != nil {
 			exception.Handle(err, c)
 			return
 		}
-		http_utils.SuccessHandle(*authRes, c)
+		http_utils.SuccessHandle(authRes, c)
 	}
 }
 
-func (ac *AuthController) Ping() gin.HandlerFunc {
+func (ac *AuthController) Me() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		stringToken := c.GetHeader("Authorization")
-		http_utils.SuccessHandle(stringToken, c)
+
+		claim, err := auth_utils.ParseToken(stringToken)
+		fmt.Printf("err : %s", err.Error())
+		//if err != nil {
+		//	exception.Handle(err, c)
+		//}
+
+		response, err := ac.as.Me(c, claim.Email)
+		//if err != nil {
+		//	exception.Handle(err, c)
+		//}
+		http_utils.SuccessHandle(response, c)
 	}
 }

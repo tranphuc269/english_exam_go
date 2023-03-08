@@ -13,14 +13,16 @@ var jwtKey = []byte("tranphuc")
 type JWTClaim struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
+	Role     string `json:"role"`
 	jwt.StandardClaims
 }
 
-func GenerateJWT(email string, username string) (tokenString string, err error) {
+func GenerateJWT(email string, username string, role string) (tokenString string, err error) {
 	expirationTime := time.Now().Add(1 * time.Hour)
 	claims := &JWTClaim{
 		Email:    email,
 		Username: username,
+		Role:     role,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expirationTime.Unix(),
 		},
@@ -30,7 +32,6 @@ func GenerateJWT(email string, username string) (tokenString string, err error) 
 	return tokenString, err
 }
 func ValidateToken(signedToken string) (err error) {
-	fmt.Println(signedToken)
 	token, err := jwt.ParseWithClaims(
 		signedToken,
 		&JWTClaim{},
@@ -51,6 +52,22 @@ func ValidateToken(signedToken string) (err error) {
 		return
 	}
 	return
+}
+
+func ParseToken(signedToken string) (jwtClaim *JWTClaim, err error) {
+	token, err := jwt.ParseWithClaims(
+		signedToken,
+		&JWTClaim{},
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(jwtKey), nil
+		},
+	)
+	//if err != nil {
+	//	return
+	//}
+	claims, _ := token.Claims.(*JWTClaim)
+	fmt.Printf("auth : %s", claims.Username)
+	return claims, err
 }
 
 func HashPassword(password string) (response string, err error) {
