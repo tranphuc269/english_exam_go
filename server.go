@@ -97,10 +97,25 @@ func ginInit(mode string) *gin.Engine {
 }
 
 func ginValidation() {
+	/// tạo enum cho validate role khi khởi tạo user
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		err := v.RegisterValidation("userRoleEnum", func(fl validator.FieldLevel) bool {
 			switch fl.Field().Interface().(resource.UserRole) {
 			case resource.Admin, resource.Student, resource.Lecturer:
+				return true
+			default:
+				return false
+			}
+		})
+		if err != nil {
+			return
+		}
+	}
+	/// tạo enum cho validate questionCase : Reading || Listening cho khởi tạo exam_question
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		err := v.RegisterValidation("questionCase", func(fl validator.FieldLevel) bool {
+			switch fl.Field().Interface().(resource.QuestionCase) {
+			case resource.QuestionReading, resource.QuestionListening:
 				return true
 			default:
 				return false
