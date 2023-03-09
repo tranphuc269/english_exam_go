@@ -2,7 +2,6 @@ package utils
 
 import (
 	"errors"
-	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
 	"time"
@@ -66,7 +65,6 @@ func ParseToken(signedToken string) (jwtClaim *JWTClaim, err error) {
 	//	return
 	//}
 	claims, _ := token.Claims.(*JWTClaim)
-	fmt.Printf("auth : %s", claims.Username)
 	return claims, err
 }
 

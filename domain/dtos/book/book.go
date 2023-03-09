@@ -18,7 +18,7 @@ type ResponseBook struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func CreateResponseBook(ent entities.BookEnt) *ResponseBook {
+func CreateResponseBook(ent entities.Book) *ResponseBook {
 	return &ResponseBook{
 		ID:        ent.ID,
 		Title:     ent.Title,
@@ -28,9 +28,9 @@ func CreateResponseBook(ent entities.BookEnt) *ResponseBook {
 	}
 }
 
-func NewBookEnt(request *RequestBook) (entities.BookEnt, error) {
+func NewBookEnt(request *RequestBook) (entities.Book, error) {
 	// validate
-	return entities.BookEnt{
+	return entities.Book{
 		Title:   request.Title,
 		Content: request.Content,
 	}, nil

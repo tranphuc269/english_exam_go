@@ -6,8 +6,8 @@ import (
 	dtos "english_exam_go/domain/dtos/user"
 	"english_exam_go/domain/services"
 	auth_utils "english_exam_go/utils/auth"
-	"fmt"
 	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 type AuthController struct {
@@ -53,15 +53,14 @@ func (ac *AuthController) Register() gin.HandlerFunc {
 
 func (ac *AuthController) Me() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		stringToken := c.GetHeader("Authorization")
+		tokenString := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
 
-		claim, err := auth_utils.ParseToken(stringToken)
-		fmt.Printf("err : %s", err.Error())
+		claim, _ := auth_utils.ParseToken(tokenString)
 		//if err != nil {
 		//	exception.Handle(err, c)
 		//}
 
-		response, err := ac.as.Me(c, claim.Email)
+		response, _ := ac.as.Me(c, claim.Email)
 		//if err != nil {
 		//	exception.Handle(err, c)
 		//}

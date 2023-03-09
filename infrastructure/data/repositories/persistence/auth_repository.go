@@ -8,14 +8,14 @@ import (
 )
 
 type IAuthRepository interface {
-	CreateUser(context.Context, *entities.UserEnt) (*entities.UserEnt, error)
-	FindUserByEmail(context.Context, string) (*entities.UserEnt, error)
+	CreateUser(context.Context, *entities.User) (*entities.User, error)
+	FindUserByEmail(context.Context, string) (*entities.User, error)
 }
 
 type AuthRepositoryImpl struct {
 }
 
-func (ar AuthRepositoryImpl) CreateUser(ctx context.Context, ent *entities.UserEnt) (*entities.UserEnt, error) {
+func (ar AuthRepositoryImpl) CreateUser(ctx context.Context, ent *entities.User) (*entities.User, error) {
 	db := repositories.GetConn()
 
 	result := db.Create(ent)
@@ -29,11 +29,11 @@ func (ar AuthRepositoryImpl) CreateUser(ctx context.Context, ent *entities.UserE
 	return ent, nil
 }
 
-func (ar AuthRepositoryImpl) FindUserByEmail(ctx context.Context, email string) (*entities.UserEnt, error) {
+func (ar AuthRepositoryImpl) FindUserByEmail(ctx context.Context, email string) (*entities.User, error) {
 	db := repositories.GetConn()
-
-	userEnt := entities.UserEnt{}
-	err := db.Model(&entities.UserEnt{}).First(&userEnt)
+	fmt.Printf("userEnt : %s", email)
+	userEnt := entities.User{}
+	err := db.Model(&entities.User{}).First(&userEnt)
 	if err.Error != nil {
 		return nil, &repositories.NotFoundError{
 			Msg:           repositories.DefaultNotFoundMsg,
@@ -41,6 +41,7 @@ func (ar AuthRepositoryImpl) FindUserByEmail(ctx context.Context, email string) 
 			OriginalError: err.Error,
 		}
 	}
+
 	return &userEnt, nil
 }
 

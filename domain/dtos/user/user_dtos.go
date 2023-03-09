@@ -38,7 +38,7 @@ type UserResponse struct {
 	DateOfBirth time.Time `json:"date_of_birth"`
 }
 
-func (rar *RegisterAccountRequest) RegisterAccountToUserEnt() (*entities.UserEnt, error) {
+func (rar *RegisterAccountRequest) RegisterAccountToUserEnt() (*entities.User, error) {
 	date, err := time.Parse("2006-01-02", rar.DateOfBirth)
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func (rar *RegisterAccountRequest) RegisterAccountToUserEnt() (*entities.UserEnt
 	if err != nil {
 		return nil, err
 	}
-	return &entities.UserEnt{
+	return &entities.User{
 		Model:       gorm.Model{},
 		Name:        rar.Name,
 		Email:       rar.Email,
@@ -59,7 +59,7 @@ func (rar *RegisterAccountRequest) RegisterAccountToUserEnt() (*entities.UserEnt
 	}, nil
 }
 
-func UserEntToResponse(ue *entities.UserEnt) *UserResponse {
+func UserEntToResponse(ue *entities.User) *UserResponse {
 	return &UserResponse{
 		Model:       ue.Model,
 		Name:        ue.Name,

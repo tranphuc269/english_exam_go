@@ -11,17 +11,17 @@ import (
 const bookTables = "book_ents"
 
 type IBookRepository interface {
-	CreateBook(context.Context, *entities.BookEnt) error
-	FindBook(context.Context, uint) (*entities.BookEnt, error)
-	FindBooks(context.Context) ([]*entities.BookEnt, error)
-	UpdateBook(context.Context, *entities.BookEnt) error
+	CreateBook(context.Context, *entities.Book) error
+	FindBook(context.Context, uint) (*entities.Book, error)
+	FindBooks(context.Context) ([]*entities.Book, error)
+	UpdateBook(context.Context, *entities.Book) error
 	DeleteBook(context.Context, uint) error
 }
 
 type BookRepositoryImpl struct {
 }
 
-func (br BookRepositoryImpl) CreateBook(ctx context.Context, ent *entities.BookEnt) error {
+func (br BookRepositoryImpl) CreateBook(ctx context.Context, ent *entities.Book) error {
 	//TODO implement me
 	db, _ := repositories.GetTx(ctx)
 	//db := repositories.GetConn()
@@ -35,10 +35,10 @@ func (br BookRepositoryImpl) CreateBook(ctx context.Context, ent *entities.BookE
 	return nil
 }
 
-func (br BookRepositoryImpl) FindBook(ctx context.Context, ID uint) (*entities.BookEnt, error) {
+func (br BookRepositoryImpl) FindBook(ctx context.Context, ID uint) (*entities.Book, error) {
 	//TODO implement me
 	db := repositories.GetConn().Table(bookTables)
-	bookEnt := &entities.BookEnt{}
+	bookEnt := &entities.Book{}
 
 	err := db.Take(&bookEnt, "id=?", ID)
 	if err != nil {
@@ -51,10 +51,10 @@ func (br BookRepositoryImpl) FindBook(ctx context.Context, ID uint) (*entities.B
 	return bookEnt, err.Error
 }
 
-func (br BookRepositoryImpl) FindBooks(ctx context.Context) ([]*entities.BookEnt, error) {
+func (br BookRepositoryImpl) FindBooks(ctx context.Context) ([]*entities.Book, error) {
 	//TODO implement me
 	db := repositories.GetConn()
-	var books []*entities.BookEnt
+	var books []*entities.Book
 	result := db.Order("title").Limit(51).Find(&books)
 	if result.Error != nil || result.RowsAffected == 0 {
 		return nil, &repositories.NotFoundError{
@@ -66,7 +66,7 @@ func (br BookRepositoryImpl) FindBooks(ctx context.Context) ([]*entities.BookEnt
 	return books, nil
 }
 
-func (br BookRepositoryImpl) UpdateBook(ctx context.Context, requestBook *entities.BookEnt) error {
+func (br BookRepositoryImpl) UpdateBook(ctx context.Context, requestBook *entities.Book) error {
 	//TODO implement me
 	db := repositories.GetConn()
 	b, _ := json.Marshal(requestBook)
@@ -91,7 +91,7 @@ func (br BookRepositoryImpl) UpdateBook(ctx context.Context, requestBook *entiti
 func (br BookRepositoryImpl) DeleteBook(ctx context.Context, ID uint) error {
 	//TODO implement me
 	db, _ := repositories.GetTx(ctx)
-	result := db.Where("id = ?", ID).Delete(&entities.BookEnt{})
+	result := db.Where("id = ?", ID).Delete(&entities.Book{})
 	if result.Error != nil {
 		return &repositories.RdbRuntimeError{
 			ErrMsg:        fmt.Sprintf("[infrastructure.persistence.DeleteBook] failed to delete Book in RDB. ID : %d", ID),

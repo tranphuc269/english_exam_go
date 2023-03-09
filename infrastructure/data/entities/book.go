@@ -4,7 +4,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type BookEnt struct {
+type Book struct {
 	gorm.Model
 	Title   string `json:"title"`
 	Content string `json:"content"`

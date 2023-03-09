@@ -20,3 +20,10 @@ func (role UserRole) IsValid() bool {
 func (role UserRole) ToString() string {
 	return [...]string{"Admin", "Student", "Lecturer"}[role-1]
 }
+
+type QuestionCase int
+
+const (
+	QuestionReading   QuestionCase = 1
+	QuestionListening QuestionCase = 2
+)

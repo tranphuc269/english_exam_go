@@ -21,9 +21,14 @@ func main() {
 
 	if db != nil {
 		err := db.Debug().AutoMigrate(
-			&entities.BookEnt{},
-			&entities.UserEnt{},
+			&entities.User{},
+			&entities.Exam{},
+			&entities.ExamInvite{},
+			&entities.ExamResult{},
+			&entities.QuestionAnswer{},
+			&entities.ExamQuestion{},
 		)
+		//db.Model(&entities.ExamQuestion{}).AddForeignKey("question_answer_id", "question_answers(id)", "CASCADE", "CASCADE")
 		if err != nil {
 			return
 		}
