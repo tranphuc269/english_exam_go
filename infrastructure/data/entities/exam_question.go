@@ -17,5 +17,5 @@ type QuestionAnswer struct {
 	gorm.Model
 	QuestionId int    `json:"question_id"`
 	Content    string `json:"content"`
-	IsCorrect  string `json:"is_correct"`
+	IsCorrect  int    `json:"is_correct"`
 }

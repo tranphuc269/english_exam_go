@@ -8,7 +8,7 @@ import (
 )
 
 type IExamRepository interface {
-	CreateExam(context.Context, entities.Exam) error
+	CreateExam(context.Context, *entities.Exam) error
 	FindExamById(context.Context, uint) (*entities.Exam, error)
 	FindExamsByCreatorId(context.Context, uint) ([]*entities.Exam, error)
 	FindExamsByTaskerId(context.Context, uint) ([]*entities.Exam, error)
@@ -17,7 +17,7 @@ type IExamRepository interface {
 type ExamRepository struct {
 }
 
-func (er ExamRepository) CreateExam(ctx context.Context, exam entities.Exam) error {
+func (er ExamRepository) CreateExam(ctx context.Context, exam *entities.Exam) error {
 	//TODO implement me
 	db := repositories.GetConn()
 	result := db.Create(exam)

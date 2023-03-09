@@ -10,9 +10,9 @@ import (
 type CreateExamRequest struct {
 	ExamName        string                  `json:"exam_name"`
 	ExamDescription string                  `json:"exam_description"`
-	ExamStartTime   time.Time               `json:"exam_start_time"`
+	ExamStartTime   time.Time               `json:"exam_start_time"  validate:"required,datetime"`
 	ExamEndTime     time.Time               `json:"exam_end_time" validate:"required,datetime"`
-	CreatorId       int                     `json:"creator_id" validate:"required,datetime"`
+	CreatorId       int                     `json:"creator_id"`
 	ExamQuestions   []CreateQuestionRequest `json:"exam_questions"`
 }
 
@@ -21,8 +21,8 @@ func (cer CreateExamRequest) CreateExamEntity() entities.Exam {
 		Model:           gorm.Model{},
 		ExamName:        cer.ExamName,
 		ExamDescription: cer.ExamDescription,
-		ExamStartTime:   time.Time{},
-		ExamEndTime:     time.Time{},
+		ExamStartTime:   cer.ExamStartTime,
+		ExamEndTime:     cer.ExamEndTime,
 		ExamQuestions:   ListQuestionRequestToListQuestionEntity(cer.ExamQuestions),
 		CreatorID:       1,
 	}
@@ -54,7 +54,7 @@ func ListQuestionRequestToListQuestionEntity(requests []CreateQuestionRequest) [
 
 type CreateAnswerRequest struct {
 	Content   string `json:"content"`
-	IsCorrect string `json:"is_correct"`
+	IsCorrect int    `json:"is_correct"`
 }
 
 func (car CreateAnswerRequest) CreateAnswerEntity() entities.QuestionAnswer {
