@@ -21,6 +21,7 @@ func (er ExamRepository) CreateExam(ctx context.Context, exam *entities.Exam) er
 	//TODO implement me
 	db := repositories.GetConn()
 	result := db.Create(exam)
+	fmt.Printf("result.Error : %s\n", result.Error)
 	if result.Error != nil {
 		return &repositories.RdbRuntimeError{
 			ErrMsg:        fmt.Sprintf("[infrastructure.data.repositories.persistence.CreateExam] fail to insert Exam to Database"),

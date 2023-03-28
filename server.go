@@ -12,6 +12,8 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
 	"net/http"
 	"os"
@@ -53,6 +55,7 @@ func main() {
 
 	// StartUp Server
 	app_logger.Logger.Info("Listening and serving " + "HTTP on :" + apiPort + " , " + "MODE:" + mode)
+	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	err = r.Run(":" + os.Getenv("API_PORT"))
 	if err != nil {
 		log.Fatal(err.Error())

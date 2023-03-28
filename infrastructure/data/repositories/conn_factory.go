@@ -37,9 +37,8 @@ func OpenDatabase() {
 		app_logger.Logger.Debug("TransactionImpl Commit")
 		app_logger.Logger.Panic("Can not connect DB. error:" + err.Error())
 	}
-
+	
 	connPoolSetting(db)
-
 	conn = db
 }
 

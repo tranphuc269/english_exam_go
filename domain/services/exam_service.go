@@ -4,6 +4,7 @@ import (
 	"context"
 	dtos "english_exam_go/domain/dtos/exam"
 	"english_exam_go/infrastructure/data/repositories/persistence"
+	"fmt"
 )
 
 type IExamService interface {
@@ -17,6 +18,7 @@ type ExamServiceImpl struct {
 func (es ExamServiceImpl) CreateExam(ctx context.Context, exam *dtos.CreateExamRequest) error {
 	//TODO implement me
 	examEnt := exam.CreateExamEntity()
+	fmt.Println("Create exam on service")
 	err := es.er.CreateExam(ctx, &examEnt)
 	if err != nil {
 		return err

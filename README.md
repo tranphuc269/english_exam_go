@@ -1,0 +1,1 @@
+Create swagger :  ~/go/bin/swag init -g server.go
