@@ -33,3 +33,28 @@ func (ec *ExamController) CreateExam() gin.HandlerFunc {
 		http_utils.SuccessHandle(createExamRequest, c)
 	}
 }
+
+func (ec *ExamController) GetExams() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		queries := c.Request.URL.Query()
+		http_utils.SuccessHandle(queries, c)
+	}
+}
+
+func (ec *ExamController) GetDetailExam() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		http_utils.SuccessHandle("Get detail exams", c)
+	}
+}
+
+func (ec *ExamController) UpdateExams() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		http_utils.SuccessHandle("Update Exam", c)
+	}
+}
+
+func (ec *ExamController) DeleteExam() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		http_utils.SuccessHandle("Delete exam", c)
+	}
+}

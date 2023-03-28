@@ -14,6 +14,10 @@ func (er ExamRouter) routing(e *gin.RouterGroup) {
 	be := e.Group("/exams")
 	{
 		be.POST("/", er.ec.CreateExam())
+		be.GET("/", er.ec.GetExams())
+		be.GET("/:id", er.ec.GetDetailExam())
+		be.PUT("/:id", er.ec.UpdateExams())
+		be.DELETE("/:id", er.ec.DeleteExam())
 	}
 }
 
