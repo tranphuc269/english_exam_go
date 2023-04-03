@@ -4,21 +4,34 @@ import (
 	"context"
 	dtos "english_exam_go/domain/dtos/exam"
 	"english_exam_go/infrastructure/data/repositories/persistence"
-	"fmt"
 )
 
 type IExamService interface {
 	CreateExam(ctx context.Context, exam *dtos.CreateExamRequest) error
+	GetAllExams(ctx context.Context) ([]*dtos.ExamListResponse, error)
 }
 
 type ExamServiceImpl struct {
 	er persistence.IExamRepository
 }
 
+func (es ExamServiceImpl) GetAllExams(ctx context.Context) ([]*dtos.ExamListResponse, error) {
+	//TODO implement me
+	examEnts, err := es.er.FindAllExams(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	var responseExams []*dtos.ExamListResponse
+	for _, e := range examEnts {
+		responseExams = append(responseExams, dtos.CreateExamListRes(e))
+	}
+	return responseExams, nil
+}
+
 func (es ExamServiceImpl) CreateExam(ctx context.Context, exam *dtos.CreateExamRequest) error {
 	//TODO implement me
 	examEnt := exam.CreateExamEntity()
-	fmt.Println("Create exam on service")
 	err := es.er.CreateExam(ctx, &examEnt)
 	if err != nil {
 		return err

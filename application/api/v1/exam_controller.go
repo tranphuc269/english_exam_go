@@ -5,7 +5,6 @@ import (
 	"english_exam_go/application/http_utils/exception"
 	dtos "english_exam_go/domain/dtos/exam"
 	"english_exam_go/domain/services"
-	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +18,6 @@ func CreateExamController(es services.IExamService) *ExamController {
 
 func (ec *ExamController) CreateExam() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		fmt.Println("Hello world")
 		var createExamRequest dtos.CreateExamRequest
 		if err := c.ShouldBindJSON(&createExamRequest); err != nil {
 			exception.Handle(err, c)
@@ -36,8 +34,12 @@ func (ec *ExamController) CreateExam() gin.HandlerFunc {
 
 func (ec *ExamController) GetExams() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		queries := c.Request.URL.Query()
-		http_utils.SuccessHandle(queries, c)
+		exams, err := ec.es.GetAllExams(c)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		http_utils.SuccessHandle(exams, c)
 	}
 }
 

@@ -72,3 +72,23 @@ func ListAnswerRequestToListAnswerEntity(requests []CreateAnswerRequest) []entit
 	}
 	return ents
 }
+
+type ExamListResponse struct {
+	Id              uint      `json:"id"`
+	ExamName        string    `json:"exam_name"`
+	ExamDescription string    `json:"exam_description"`
+	ExamStartTime   time.Time `json:"exam_start_time"`
+	ExamEndTime     time.Time `json:"exam_end_time"`
+	CreatorId       int       `json:"creator_id"`
+}
+
+func CreateExamListRes(entity *entities.Exam) *ExamListResponse {
+	return &ExamListResponse{
+		Id:              entity.ID,
+		ExamName:        entity.ExamName,
+		ExamDescription: entity.ExamDescription,
+		ExamStartTime:   entity.ExamStartTime,
+		ExamEndTime:     entity.ExamEndTime,
+		CreatorId:       int(entity.CreatorID),
+	}
+}

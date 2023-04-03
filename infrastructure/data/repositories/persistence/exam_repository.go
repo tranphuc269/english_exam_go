@@ -10,11 +10,27 @@ import (
 type IExamRepository interface {
 	CreateExam(context.Context, *entities.Exam) error
 	FindExamById(context.Context, uint) (*entities.Exam, error)
+	FindAllExams(ctx context.Context) ([]*entities.Exam, error)
 	FindExamsByCreatorId(context.Context, uint) ([]*entities.Exam, error)
 	FindExamsByTaskerId(context.Context, uint) ([]*entities.Exam, error)
 }
 
 type ExamRepository struct {
+}
+
+func (er ExamRepository) FindAllExams(ctx context.Context) ([]*entities.Exam, error) {
+	//TODO implement me
+	db := repositories.GetConn()
+	var exams []*entities.Exam
+	result := db.Order("created_at").Find(&exams)
+	if result.Error != nil || result.RowsAffected == 0 {
+		return nil, &repositories.NotFoundError{
+			Msg:           repositories.DefaultNotFoundMsg,
+			ErrMsg:        fmt.Sprintf("[infrastructure.data.repositories.persistence.FindAllExams] failed to find exams from rdb"),
+			OriginalError: nil,
+		}
+	}
+	return exams, nil
 }
 
 func (er ExamRepository) CreateExam(ctx context.Context, exam *entities.Exam) error {
