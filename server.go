@@ -3,6 +3,7 @@ package main
 import (
 	"english_exam_go/application/middleware"
 	"english_exam_go/application/routers"
+	"english_exam_go/infrastructure/data/entities"
 	"english_exam_go/infrastructure/data/repositories"
 	"english_exam_go/utils/app_logger"
 	"english_exam_go/utils/di"
@@ -56,6 +57,7 @@ func main() {
 	// StartUp Server
 	app_logger.Logger.Info("Listening and serving " + "HTTP on :" + apiPort + " , " + "MODE:" + mode)
 	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	serverMigration()
 	err = r.Run(":" + os.Getenv("API_PORT"))
 	if err != nil {
 		log.Fatal(err.Error())
@@ -124,6 +126,34 @@ func ginValidation() {
 				return false
 			}
 		})
+		if err != nil {
+			return
+		}
+	}
+
+}
+
+func serverMigration() {
+	if err := godotenv.Load(".env"); err != nil {
+		panic("Can not loading .env" + err.Error())
+	}
+
+	app_logger.Init()
+
+	repositories.OpenDatabase()
+
+	db := repositories.GetConn()
+
+	if db != nil {
+		err := db.Debug().AutoMigrate(
+			&entities.User{},
+			&entities.Exam{},
+			&entities.ExamInvite{},
+			&entities.ExamResult{},
+			&entities.QuestionAnswer{},
+			&entities.ExamQuestion{},
+		)
+		//db.Model(&entities.ExamQuestion{}).AddForeignKey("question_answer_id", "question_answers(id)", "CASCADE", "CASCADE")
 		if err != nil {
 			return
 		}
