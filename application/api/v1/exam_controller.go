@@ -5,7 +5,9 @@ import (
 	"english_exam_go/application/http_utils/exception"
 	dtos "english_exam_go/domain/dtos/exam"
 	"english_exam_go/domain/services"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 type ExamController struct {
@@ -45,7 +47,19 @@ func (ec *ExamController) GetExams() gin.HandlerFunc {
 
 func (ec *ExamController) GetDetailExam() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		http_utils.SuccessHandle("Get detail exams", c)
+		var params = c.Param("id")
+		fmt.Println(params)
+		ID, _ := strconv.Atoi(params)
+		//if err != nil {
+		//	exception.Handle(err, c)
+		//	return
+		//}
+		exam, _ := ec.es.GetDetailExams(c, ID)
+		//if err != nil {
+		//	exception.Handle(err, c)
+		//	return
+		//}
+		http_utils.SuccessHandle(exam, c)
 	}
 }
 

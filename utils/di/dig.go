@@ -44,18 +44,21 @@ func registerRepository(c *dig.Container) {
 	errors = append(errors, c.Provide(persistence.CreateBookRepository))
 	errors = append(errors, c.Provide(persistence.CreateAuthRepository))
 	errors = append(errors, c.Provide(persistence.CreateExamRepository))
+	errors = append(errors, c.Provide(persistence.CreateExamInviteRepository))
 }
 
 func registerService(c *dig.Container) {
 	errors = append(errors, c.Provide(services.CreateBookService))
 	errors = append(errors, c.Provide(services.CreateAuthService))
 	errors = append(errors, c.Provide(services.CreateExamService))
+	errors = append(errors, c.Provide(services.CreateExamInviteService))
 }
 
 func registerController(c *dig.Container) {
 	errors = append(errors, c.Provide(v1.CreateBookController))
 	errors = append(errors, c.Provide(v1.CreateAuthController))
 	errors = append(errors, c.Provide(v1.CreateExamController))
+	errors = append(errors, c.Provide(v1.CreateExamInviteController))
 }
 
 func registerRouter(c *dig.Container) {
@@ -63,6 +66,7 @@ func registerRouter(c *dig.Container) {
 	errors = append(errors, c.Provide(routers.CreateBookRouter, dig.Name("book")))
 	errors = append(errors, c.Provide(routers.CreateAuthRouter, dig.Name("auth")))
 	errors = append(errors, c.Provide(routers.CreateExamRouter, dig.Name("exam")))
+	errors = append(errors, c.Provide(routers.CreateExamInviteRouter, dig.Name("exam_invite")))
 
 	// RouterService
 	errors = append(errors, c.Provide(routers.NewService))

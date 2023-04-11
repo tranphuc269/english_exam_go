@@ -16,3 +16,16 @@ type Exam struct {
 	ExamCreator     User           `json:"exam_creator" gorm:"ForeignKey:CreatorID;"`
 	ExamTakers      []User         `json:"exam_takers" gorm:"many2many:exam_takers"`
 }
+
+func (Exam) TableName() string {
+	return "exams"
+}
+
+type ExamTasker struct {
+	ExamID int `json:"exam_id"`
+	UserID int `json:"user_id"`
+}
+
+func (ExamTasker) TableName() string {
+	return "exam_takers"
+}

@@ -15,13 +15,17 @@ type Service struct {
 
 type AllRouter struct {
 	dig.In
-	BookRouter Router `name:"book"`
-	AuthRouter Router `name:"auth"`
-	ExamRouter Router `name:"exam"`
+	BookRouter       Router `name:"book"`
+	AuthRouter       Router `name:"auth"`
+	ExamRouter       Router `name:"exam"`
+	ExamInviteRouter Router `name:"exam_invite"`
 }
 
 func NewService(allRouter AllRouter) *Service {
-	routers := []Router{allRouter.BookRouter, allRouter.AuthRouter, allRouter.ExamRouter}
+	routers := []Router{allRouter.BookRouter,
+		allRouter.AuthRouter,
+		allRouter.ExamRouter,
+		allRouter.ExamInviteRouter}
 	return &Service{
 		routers: routers,
 	}

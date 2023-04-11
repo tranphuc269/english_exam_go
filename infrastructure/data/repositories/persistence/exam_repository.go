@@ -5,6 +5,7 @@ import (
 	"english_exam_go/infrastructure/data/entities"
 	"english_exam_go/infrastructure/data/repositories"
 	"fmt"
+	"gorm.io/gorm"
 )
 
 type IExamRepository interface {
@@ -47,9 +48,22 @@ func (er ExamRepository) CreateExam(ctx context.Context, exam *entities.Exam) er
 	return nil
 }
 
-func (er ExamRepository) FindExamById(ctx context.Context, u uint) (*entities.Exam, error) {
+func (er ExamRepository) FindExamById(ctx context.Context, ID uint) (*entities.Exam, error) {
 	//TODO implement me
-	panic("implement me")
+	db := repositories.GetConn()
+	examEnt := &entities.Exam{}
+	err := db.Preload("ExamQuestions", func(db *gorm.DB) *gorm.DB {
+		return db.Preload("Answers")
+	}).First(&examEnt, ID)
+	//fmt.Println(err.Error)
+	if err.Error != nil {
+		return nil, &repositories.NotFoundError{
+			Msg:           repositories.DefaultNotFoundMsg,
+			ErrMsg:        fmt.Sprintf("[infrastructure.data.repositories.persistence.FindExamById] failed to find ExamEntity from rdb. ID : %d", ID),
+			OriginalError: err.Error,
+		}
+	}
+	return examEnt, err.Error
 }
 
 func (er ExamRepository) FindExamsByCreatorId(ctx context.Context, u uint) ([]*entities.Exam, error) {

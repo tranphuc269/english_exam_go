@@ -9,10 +9,20 @@ import (
 type IExamService interface {
 	CreateExam(ctx context.Context, exam *dtos.CreateExamRequest) error
 	GetAllExams(ctx context.Context) ([]*dtos.ExamListResponse, error)
+	GetDetailExams(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error)
 }
 
 type ExamServiceImpl struct {
 	er persistence.IExamRepository
+}
+
+func (es ExamServiceImpl) GetDetailExams(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error) {
+	//TODO implement me
+	examEnts, err := es.er.FindExamById(ctx, uint(ID))
+	if err != nil {
+		return nil, err
+	}
+	return dtos.ParseExamDetailRes(examEnts), nil
 }
 
 func (es ExamServiceImpl) GetAllExams(ctx context.Context) ([]*dtos.ExamListResponse, error) {

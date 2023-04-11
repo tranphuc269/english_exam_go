@@ -24,7 +24,7 @@ func (cer CreateExamRequest) CreateExamEntity() entities.Exam {
 		ExamStartTime:   cer.ExamStartTime,
 		ExamEndTime:     cer.ExamEndTime,
 		ExamQuestions:   ListQuestionRequestToListQuestionEntity(cer.ExamQuestions),
-		CreatorID:       1,
+		CreatorID:       uint(cer.CreatorId),
 	}
 }
 
@@ -73,6 +73,8 @@ func ListAnswerRequestToListAnswerEntity(requests []CreateAnswerRequest) []entit
 	return ents
 }
 
+// response
+
 type ExamListResponse struct {
 	Id              uint      `json:"id"`
 	ExamName        string    `json:"exam_name"`
@@ -91,4 +93,70 @@ func CreateExamListRes(entity *entities.Exam) *ExamListResponse {
 		ExamEndTime:     entity.ExamEndTime,
 		CreatorId:       int(entity.CreatorID),
 	}
+}
+
+type ExamDetailResponse struct {
+	ID              int                `json:"id"`
+	ExamName        string             `json:"exam_name"`
+	ExamDescription string             `json:"exam_description"`
+	ExamStartTime   time.Time          `json:"exam_start_time"`
+	ExamEndTime     time.Time          `json:"exam_end_time"`
+	CreatorId       int                `json:"creator_id"`
+	ExamQuestions   []QuestionResponse `json:"exam_questions"`
+}
+
+type QuestionResponse struct {
+	ID           int                   `json:"id"`
+	QuestionText string                `json:"question_text"`
+	QuestionCase resource.QuestionCase `json:"question_case,omitempty"`
+	Answers      []AnswerResponse      `json:"answers"`
+}
+
+type AnswerResponse struct {
+	ID      int    `json:"id"`
+	Content string `json:"content"`
+}
+
+func ParseExamDetailRes(entity *entities.Exam) *ExamDetailResponse {
+	return &ExamDetailResponse{
+		ID:              int(entity.ID),
+		ExamName:        entity.ExamName,
+		ExamDescription: entity.ExamDescription,
+		ExamStartTime:   entity.ExamStartTime,
+		ExamEndTime:     entity.ExamEndTime,
+		CreatorId:       int(entity.CreatorID),
+		ExamQuestions:   ParseListQuestionResponse(entity.ExamQuestions),
+	}
+}
+
+func ParseQuestionResponse(question *entities.ExamQuestion) *QuestionResponse {
+	return &QuestionResponse{
+		ID:           int(question.ID),
+		QuestionText: question.QuestionText,
+		QuestionCase: question.QuestionCase,
+		Answers:      ParseListAnswerResponse(question.Answers),
+	}
+}
+
+func ParseListQuestionResponse(questions []entities.ExamQuestion) []QuestionResponse {
+	var questionResponse []QuestionResponse
+	for _, ques := range questions {
+		questionResponse = append(questionResponse, *ParseQuestionResponse(&ques))
+	}
+	return questionResponse
+}
+
+func ParseAnswerResponse(answer *entities.QuestionAnswer) *AnswerResponse {
+	return &AnswerResponse{
+		ID:      int(answer.ID),
+		Content: answer.Content,
+	}
+}
+
+func ParseListAnswerResponse(answers []entities.QuestionAnswer) []AnswerResponse {
+	var answerResponse []AnswerResponse
+	for _, ans := range answers {
+		answerResponse = append(answerResponse, *ParseAnswerResponse(&ans))
+	}
+	return answerResponse
 }
