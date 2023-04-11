@@ -6,6 +6,7 @@ import (
 	dtos "english_exam_go/domain/dtos/exam"
 	"english_exam_go/domain/services"
 	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 type ExamInviteController struct {
@@ -29,5 +30,26 @@ func (eic ExamInviteController) AddUserToExam() gin.HandlerFunc {
 			return
 		}
 		http_utils.CreatedHandle(c)
+	}
+}
+
+func (eic ExamInviteController) RemoveUserFromExam() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ExamID, err := strconv.Atoi(c.Query("exam_id"))
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		UserID, err := strconv.Atoi(c.Query("user_id"))
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		err = eic.eis.RemoveUserToExam(c, ExamID, UserID)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		http_utils.NoContentHandle(c)
 	}
 }

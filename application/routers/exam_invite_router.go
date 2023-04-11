@@ -14,6 +14,7 @@ func (eir ExamInviteRouter) routing(e *gin.RouterGroup) {
 	be := e.Group("/exam_invite")
 	{
 		be.POST("", eir.eic.AddUserToExam())
+		be.DELETE("", eir.eic.RemoveUserFromExam())
 	}
 }
 
