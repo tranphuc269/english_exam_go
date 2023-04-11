@@ -66,14 +66,23 @@ func (er ExamRepository) FindExamById(ctx context.Context, ID uint) (*entities.E
 	return examEnt, err.Error
 }
 
-func (er ExamRepository) FindExamsByCreatorId(ctx context.Context, u uint) ([]*entities.Exam, error) {
+func (er ExamRepository) FindExamsByCreatorId(ctx context.Context, UserID uint) ([]*entities.Exam, error) {
 	//TODO implement me
-	panic("implement me")
+	db := repositories.GetConn()
+	var exams []*entities.Exam
+	result := db.Where("creator_id=?", UserID).Find(&exams)
+	return exams, result.Error
 }
 
-func (er ExamRepository) FindExamsByTaskerId(ctx context.Context, u uint) ([]*entities.Exam, error) {
+func (er ExamRepository) FindExamsByTaskerId(ctx context.Context, UserID uint) ([]*entities.Exam, error) {
 	//TODO implement me
-	panic("implement me")
+	db := repositories.GetConn()
+	var exams []*entities.Exam
+	result := db.Table("exams").Select("exam.*").
+		Joins("JOIN exam_takers ON exams.id = exam_takers.exam_id").
+		Where("exam_takers.user_id = ?", UserID).
+		Find(&exams)
+	return exams, result.Error
 }
 
 func CreateExamRepository() IExamRepository {

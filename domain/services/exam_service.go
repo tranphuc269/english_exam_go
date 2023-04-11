@@ -9,11 +9,41 @@ import (
 type IExamService interface {
 	CreateExam(ctx context.Context, exam *dtos.CreateExamRequest) error
 	GetAllExams(ctx context.Context) ([]*dtos.ExamListResponse, error)
+	GetExamByCreatorID(ctx context.Context, UserID int) ([]*dtos.ExamListResponse, error)
+	GetExamByTakerID(ctx context.Context, UserID int) ([]*dtos.ExamListResponse, error)
 	GetDetailExams(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error)
 }
 
 type ExamServiceImpl struct {
 	er persistence.IExamRepository
+}
+
+func (es ExamServiceImpl) GetExamByCreatorID(ctx context.Context, UserID int) ([]*dtos.ExamListResponse, error) {
+	//TODO implement me
+	examEnts, err := es.er.FindExamsByCreatorId(ctx, uint(UserID))
+	if err != nil {
+		return nil, err
+	}
+
+	var responseExams []*dtos.ExamListResponse
+	for _, e := range examEnts {
+		responseExams = append(responseExams, dtos.CreateExamListRes(e))
+	}
+	return responseExams, nil
+}
+
+func (es ExamServiceImpl) GetExamByTakerID(ctx context.Context, UserID int) ([]*dtos.ExamListResponse, error) {
+	//TODO implement me
+	examEnts, err := es.er.FindExamsByCreatorId(ctx, uint(UserID))
+	if err != nil {
+		return nil, err
+	}
+
+	var responseExams []*dtos.ExamListResponse
+	for _, e := range examEnts {
+		responseExams = append(responseExams, dtos.CreateExamListRes(e))
+	}
+	return responseExams, nil
 }
 
 func (es ExamServiceImpl) GetDetailExams(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error) {

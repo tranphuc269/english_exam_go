@@ -16,8 +16,8 @@ func (er ExamRouter) routing(e *gin.RouterGroup) {
 		be.POST("/", er.ec.CreateExam())
 		be.GET("/", er.ec.GetExams())
 		be.GET("/:id", er.ec.GetDetailExam())
-		be.PUT("/:id", er.ec.UpdateExams())
-		be.DELETE("/:id", er.ec.DeleteExam())
+		be.GET("/creators/:id", er.ec.GetExamsByCreatorID())
+		be.GET("/takers/:id", er.ec.GetExamsByCreatorID())
 	}
 }
 

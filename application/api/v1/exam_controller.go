@@ -49,28 +49,50 @@ func (ec *ExamController) GetDetailExam() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var params = c.Param("id")
 		fmt.Println(params)
-		ID, _ := strconv.Atoi(params)
-		//if err != nil {
-		//	exception.Handle(err, c)
-		//	return
-		//}
+		ID, err := strconv.Atoi(params)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
 		exam, _ := ec.es.GetDetailExams(c, ID)
-		//if err != nil {
-		//	exception.Handle(err, c)
-		//	return
-		//}
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
 		http_utils.SuccessHandle(exam, c)
 	}
 }
 
-func (ec *ExamController) UpdateExams() gin.HandlerFunc {
+func (ec *ExamController) GetExamsByCreatorID() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		http_utils.SuccessHandle("Update Exam", c)
+		var params = c.Param("id")
+		creatorID, err := strconv.Atoi(params)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		exams, err := ec.es.GetExamByCreatorID(c, creatorID)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		http_utils.SuccessHandle(exams, c)
 	}
 }
 
-func (ec *ExamController) DeleteExam() gin.HandlerFunc {
+func (ec *ExamController) GetExamByTakerID() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		http_utils.SuccessHandle("Delete exam", c)
+		var params = c.Param("id")
+		takerID, err := strconv.Atoi(params)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		exams, err := ec.es.GetExamByTakerID(c, takerID)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		http_utils.SuccessHandle(exams, c)
 	}
 }
