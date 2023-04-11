@@ -39,7 +39,7 @@ func (as AuthServiceImpl) Register(ctx context.Context, request dtos.RegisterAcc
 	if err != nil {
 		return nil, err
 	}
-	jwt, err := auth_utils.GenerateJWT(userEnt.Email, userEnt.Name, request.Role.ToString())
+	jwt, err := auth_utils.GenerateJWT(int(userEnt.ID), userEnt.Email, userEnt.Name, request.Role.ToString())
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +62,7 @@ func (as AuthServiceImpl) Login(ctx context.Context, request dtos.LoginRequest) 
 		return nil, err
 	}
 
-	jwt, err := auth_utils.GenerateJWT(request.Email, userEnt.Name, userEnt.Role.ToString())
+	jwt, err := auth_utils.GenerateJWT(int(userEnt.ID), request.Email, userEnt.Name, userEnt.Role.ToString())
 	if err != nil {
 		return nil, err
 	}

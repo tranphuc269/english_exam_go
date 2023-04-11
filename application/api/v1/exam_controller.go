@@ -5,9 +5,11 @@ import (
 	"english_exam_go/application/http_utils/exception"
 	dtos "english_exam_go/domain/dtos/exam"
 	"english_exam_go/domain/services"
+	auth_utils "english_exam_go/utils/auth"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"strconv"
+	"strings"
 )
 
 type ExamController struct {
@@ -20,11 +22,15 @@ func CreateExamController(es services.IExamService) *ExamController {
 
 func (ec *ExamController) CreateExam() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		tokenString := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
+
+		claim, _ := auth_utils.ParseToken(tokenString)
 		var createExamRequest dtos.CreateExamRequest
 		if err := c.ShouldBindJSON(&createExamRequest); err != nil {
 			exception.Handle(err, c)
 			//return
 		}
+		createExamRequest.CreatorId = claim.UserID
 		err := ec.es.CreateExam(c, &createExamRequest)
 		if err != nil {
 			exception.Handle(err, c)

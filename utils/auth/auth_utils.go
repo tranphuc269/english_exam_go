@@ -10,15 +10,17 @@ import (
 var jwtKey = []byte("tranphuc")
 
 type JWTClaim struct {
+	UserID   int    `json:"user_id"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
 	Role     string `json:"role"`
 	jwt.StandardClaims
 }
 
-func GenerateJWT(email string, username string, role string) (tokenString string, err error) {
+func GenerateJWT(userId int, email string, username string, role string) (tokenString string, err error) {
 	expirationTime := time.Now().Add(1 * time.Hour)
 	claims := &JWTClaim{
+		UserID:   userId,
 		Email:    email,
 		Username: username,
 		Role:     role,
