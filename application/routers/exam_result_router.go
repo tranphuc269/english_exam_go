@@ -15,6 +15,7 @@ func (esr ExamResultRouter) routing(e *gin.RouterGroup) {
 	be := e.Group("/exam-submit").Use(middleware.Authentication())
 	{
 		be.POST("", esr.esc.SubmitExam())
+		be.GET("", esr.esc.GetListExam())
 	}
 }
 

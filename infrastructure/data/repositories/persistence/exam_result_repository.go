@@ -9,9 +9,18 @@ import (
 
 type IExamResultRepository interface {
 	SubmitExam(ctx context.Context, result *entities.ExamResult) (*dtos.ExamResultRes, error)
+	GetListExamByTakerID(ctx context.Context, TakerID int) []*entities.ExamResult
 }
 
 type ExamResultRepositoryImpl struct {
+}
+
+func (e ExamResultRepositoryImpl) GetListExamByTakerID(ctx context.Context, TakerID int) []*entities.ExamResult {
+	//TODO implement me
+	db := repositories.GetConn()
+	var examDone []*entities.ExamResult
+	_ = db.Where("user_id = ?", TakerID).Order("created_at").Find(&examDone)
+	return examDone
 }
 
 func (e ExamResultRepositoryImpl) SubmitExam(ctx context.Context, result *entities.ExamResult) (*dtos.ExamResultRes, error) {

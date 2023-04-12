@@ -6,6 +6,7 @@ import (
 	dtos "english_exam_go/domain/dtos/exam"
 	"english_exam_go/domain/services"
 	auth_utils "english_exam_go/utils/auth"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"strings"
 )
@@ -31,6 +32,19 @@ func (esc ExamResultController) SubmitExam() gin.HandlerFunc {
 			return
 		}
 		http_utils.SuccessHandle(result, c)
+	}
+}
+
+func (esc ExamResultController) GetListExam() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userId, _ := auth_utils.GetUserIdFromToken(c)
+		//if err != nil {
+		//	exception.Handle(err, c)
+		//	return
+		//}
+		exams := esc.ess.GetYourExamDone(c, userId)
+		fmt.Println(exams)
+		http_utils.SuccessHandle(exams, c)
 	}
 }
 

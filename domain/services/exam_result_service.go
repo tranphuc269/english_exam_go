@@ -11,11 +11,32 @@ import (
 
 type IExamResultService interface {
 	SubmitExam(ctx context.Context, submitRequest dtos.CreateExamSubmit) (*dtos.ExamResultRes, error)
+	GetYourExamDone(ctx context.Context, UserID int) []*dtos.ExamResultRes
 }
 
 type ExamResultServiceImpl struct {
 	err persistence.IExamResultRepository
 	er  persistence.IExamRepository
+}
+
+func (ers ExamResultServiceImpl) GetYourExamDone(ctx context.Context,
+	UserID int) []*dtos.ExamResultRes {
+	//TODO implement me
+	examDoneEnts := ers.err.GetListExamByTakerID(ctx, UserID)
+	var results []*dtos.ExamResultRes
+	for _, ent := range examDoneEnts {
+		results = append(results, &dtos.ExamResultRes{
+			ID:                  int(ent.ID),
+			ExamID:              ent.ExamId,
+			TotalScore:          ent.TotalScore,
+			ReadingScore:        ent.ReadingScore,
+			ListeningScore:      ent.ListeningScore,
+			NumCorrectReading:   ent.NumCorrectReading,
+			NumCorrectListening: ent.NumCorrectListening,
+			TabSwitchCount:      ent.TabSwitchCount,
+		})
+	}
+	return results
 }
 
 func (ers ExamResultServiceImpl) SubmitExam(ctx context.Context,
@@ -62,7 +83,8 @@ func (ers ExamResultServiceImpl) SubmitExam(ctx context.Context,
 	return result, err
 }
 
-func CreateExamResultService(err persistence.IExamResultRepository, er persistence.IExamRepository) IExamResultService {
+func CreateExamResultService(err persistence.IExamResultRepository,
+	er persistence.IExamRepository) IExamResultService {
 	return &ExamResultServiceImpl{
 		err: err,
 		er:  er,

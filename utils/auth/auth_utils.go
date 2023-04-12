@@ -3,7 +3,9 @@ package utils
 import (
 	"errors"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
+	"strings"
 	"time"
 )
 
@@ -68,6 +70,16 @@ func ParseToken(signedToken string) (jwtClaim *JWTClaim, err error) {
 	//}
 	claims, _ := token.Claims.(*JWTClaim)
 	return claims, err
+}
+
+func GetUserIdFromToken(ctx *gin.Context) (int, error) {
+	tokenString := strings.TrimPrefix(ctx.GetHeader("Authorization"), "Bearer ")
+
+	claim, err := ParseToken(tokenString)
+	//if err := ctx.ShouldBindJSON(&createExamSubmit); err != nil {
+	//	return -1, err
+	//}
+	return claim.UserID, err
 }
 
 func HashPassword(password string) (response string, err error) {
