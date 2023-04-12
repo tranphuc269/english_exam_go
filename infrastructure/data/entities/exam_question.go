@@ -13,6 +13,15 @@ type ExamQuestion struct {
 	Answers      []QuestionAnswer      `json:"answers" gorm:"ForeignKey:QuestionId;"`
 }
 
+func (eq *ExamQuestion) GetCorrectAnswer() int {
+	for _, answer := range eq.Answers {
+		if answer.IsCorrect == 1 {
+			return int(answer.ID)
+		}
+	}
+	return -1
+}
+
 type QuestionAnswer struct {
 	gorm.Model
 	QuestionId int    `json:"question_id"`

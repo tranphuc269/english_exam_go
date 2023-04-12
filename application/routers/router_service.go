@@ -18,6 +18,7 @@ type AllRouter struct {
 	BookRouter       Router `name:"book"`
 	AuthRouter       Router `name:"auth"`
 	ExamRouter       Router `name:"exam"`
+	ExamSubmitRouter Router `name:"exam_submit"`
 	ExamInviteRouter Router `name:"exam_invite"`
 }
 
@@ -25,6 +26,7 @@ func NewService(allRouter AllRouter) *Service {
 	routers := []Router{allRouter.BookRouter,
 		allRouter.AuthRouter,
 		allRouter.ExamRouter,
+		allRouter.ExamSubmitRouter,
 		allRouter.ExamInviteRouter}
 	return &Service{
 		routers: routers,

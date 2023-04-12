@@ -2,8 +2,9 @@ package dtos
 
 import "gorm.io/gorm"
 
-type ExamResultResponseList struct {
-	gorm.Model
+type ExamResultRes struct {
+	ID                  int `json:"id"`
+	ExamID              int `json:"exam_id"`
 	TotalScore          int `json:"total_score"`
 	ReadingScore        int `json:"reading_score"`
 	ListeningScore      int `json:"listening_score"`
