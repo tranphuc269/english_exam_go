@@ -10,11 +10,11 @@ import (
 	"strings"
 )
 
-type ExamSubmitController struct {
+type ExamResultController struct {
 	ess services.IExamResultService
 }
 
-func (esc ExamSubmitController) SubmitExam() gin.HandlerFunc {
+func (esc ExamResultController) SubmitExam() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
 
@@ -34,6 +34,6 @@ func (esc ExamSubmitController) SubmitExam() gin.HandlerFunc {
 	}
 }
 
-func CreateExamSubmitController(ess services.IExamResultService) *ExamSubmitController {
-	return &ExamSubmitController{ess: ess}
+func CreateExamSubmitController(ess services.IExamResultService) *ExamResultController {
+	return &ExamResultController{ess: ess}
 }

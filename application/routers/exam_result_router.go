@@ -6,11 +6,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type ExamSubmitRouter struct {
-	esc *v1.ExamSubmitController
+type ExamResultRouter struct {
+	esc *v1.ExamResultController
 }
 
-func (esr ExamSubmitRouter) routing(e *gin.RouterGroup) {
+func (esr ExamResultRouter) routing(e *gin.RouterGroup) {
 	//TODO implement me
 	be := e.Group("/exam-submit").Use(middleware.Authentication())
 	{
@@ -18,6 +18,6 @@ func (esr ExamSubmitRouter) routing(e *gin.RouterGroup) {
 	}
 }
 
-func CreateExamSubmitRouter(esc *v1.ExamSubmitController) Router {
-	return &ExamSubmitRouter{esc: esc}
+func CreateExamSubmitRouter(esc *v1.ExamResultController) Router {
+	return &ExamResultRouter{esc: esc}
 }

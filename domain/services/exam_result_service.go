@@ -44,14 +44,14 @@ func (ers ExamResultServiceImpl) SubmitExam(ctx context.Context,
 		}
 
 	}
-	readingScore := resource.WRITING_TOEIC_RESULT[numCorrectReading]
-	listeningScore := resource.WRITING_TOEIC_RESULT[numCorrectListening]
-	totalScore := (float64(10) * ((0.5 * float64(numCorrectReading)) + 0.5*float64(numCorrectListening))) + 100
+	readingScore := resource.WritingToeicResult[numCorrectReading]
+	listeningScore := resource.ReadingToeicResult[numCorrectListening]
+	totalScore := readingScore + listeningScore
 	examResultEnt := entities.ExamResult{
 		Model:               gorm.Model{},
 		ExamId:              submitRequest.ExamId,
 		UserId:              submitRequest.TakerID,
-		TotalScore:          int(totalScore),
+		TotalScore:          totalScore,
 		ReadingScore:        readingScore,
 		ListeningScore:      listeningScore,
 		NumCorrectReading:   numCorrectReading,
