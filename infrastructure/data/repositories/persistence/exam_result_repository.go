@@ -29,6 +29,8 @@ func (e ExamResultRepositoryImpl) SubmitExam(ctx context.Context, result *entiti
 	err := db.Create(result)
 	return &dtos.ExamResultRes{
 		ID:                  int(result.ID),
+		CreatedAt:           result.CreatedAt,
+		UpdatedAt:           result.UpdatedAt,
 		ExamID:              result.ExamId,
 		TotalScore:          result.TotalScore,
 		ReadingScore:        result.ReadingScore,

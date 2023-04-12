@@ -27,6 +27,8 @@ func (ers ExamResultServiceImpl) GetYourExamDone(ctx context.Context,
 	for _, ent := range examDoneEnts {
 		results = append(results, &dtos.ExamResultRes{
 			ID:                  int(ent.ID),
+			CreatedAt:           ent.CreatedAt,
+			UpdatedAt:           ent.UpdatedAt,
 			ExamID:              ent.ExamId,
 			TotalScore:          ent.TotalScore,
 			ReadingScore:        ent.ReadingScore,
