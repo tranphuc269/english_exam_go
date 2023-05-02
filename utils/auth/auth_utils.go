@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-var jwtKey = []byte("tranphuc")
+var jwtKey = []byte("Tranvanphuc123456789Tranvanphuc123456789Tranvanphuc123456789Tranvanphuc123456789")
 
 type JWTClaim struct {
 	UserID   int    `json:"user_id"`
