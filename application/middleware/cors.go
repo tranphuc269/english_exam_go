@@ -24,6 +24,7 @@ func SetCors() gin.HandlerFunc {
 			"Accept-Encoding",
 		},
 		AllowCredentials: true,
+		AllowWildcard:    true,
 		MaxAge:           24 * time.Hour,
 	})
 

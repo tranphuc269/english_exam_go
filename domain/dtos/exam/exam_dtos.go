@@ -30,6 +30,7 @@ func (cer CreateExamRequest) CreateExamEntity() entities.Exam {
 
 type CreateQuestionRequest struct {
 	QuestionText string                `json:"question_text"`
+	File         string                `json:"file"`
 	QuestionCase resource.QuestionCase `json:"question_case,omitempty" binding:"required,questionCase"`
 	Answers      []CreateAnswerRequest `json:"answers"`
 }
@@ -39,6 +40,7 @@ func (cqr CreateQuestionRequest) CreateQuestionEntity() entities.ExamQuestion {
 	return entities.ExamQuestion{
 		Model:        gorm.Model{},
 		QuestionText: cqr.QuestionText,
+		File:         cqr.File,
 		QuestionCase: cqr.QuestionCase,
 		Answers:      ListAnswerRequestToListAnswerEntity(cqr.Answers),
 	}
@@ -108,6 +110,7 @@ type ExamDetailResponse struct {
 type QuestionResponse struct {
 	ID           int                   `json:"id"`
 	QuestionText string                `json:"question_text"`
+	File         string                `json:"file"`
 	QuestionCase resource.QuestionCase `json:"question_case,omitempty"`
 	Answers      []AnswerResponse      `json:"answers"`
 }
@@ -133,6 +136,7 @@ func ParseQuestionResponse(question *entities.ExamQuestion) *QuestionResponse {
 	return &QuestionResponse{
 		ID:           int(question.ID),
 		QuestionText: question.QuestionText,
+		File:         question.File,
 		QuestionCase: question.QuestionCase,
 		Answers:      ParseListAnswerResponse(question.Answers),
 	}

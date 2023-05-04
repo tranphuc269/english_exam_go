@@ -9,6 +9,7 @@ type ExamQuestion struct {
 	gorm.Model
 	ExamId       int                   `json:"exam_id"`
 	QuestionText string                `json:"question_text"`
+	File         string                `json:"file"`
 	QuestionCase resource.QuestionCase `json:"question_case"`
 	Answers      []QuestionAnswer      `json:"answers" gorm:"ForeignKey:QuestionId;"`
 }

@@ -86,18 +86,17 @@ func ginInit(mode string) *gin.Engine {
 
 	r := gin.New()
 
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
 	// gin-zap middleware
 	r.Use(ginzap.Ginzap(app_logger.Logger, time.RFC3339, true))
 	// logging all panic to error log
 	r.Use(ginzap.RecoveryWithZap(app_logger.Logger, true))
 	// CORS middleware
 	r.Use(middleware.SetCors())
-
+	r.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"message": "pong",
+		})
+	})
 	return r
 }
 
@@ -143,7 +142,7 @@ func serverMigration() {
 	repositories.OpenDatabase()
 
 	db := repositories.GetConn()
-	
+
 	if db != nil {
 		err := db.Debug().AutoMigrate(
 			&entities.User{},
