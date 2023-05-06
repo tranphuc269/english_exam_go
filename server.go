@@ -1,7 +1,6 @@
 package main
 
 import (
-	"english_exam_go/application/middleware"
 	"english_exam_go/application/routers"
 	"english_exam_go/infrastructure/data/entities"
 	"english_exam_go/infrastructure/data/repositories"
@@ -91,7 +90,20 @@ func ginInit(mode string) *gin.Engine {
 	// logging all panic to error log
 	r.Use(ginzap.RecoveryWithZap(app_logger.Logger, true))
 	// CORS middleware
-	r.Use(middleware.SetCors())
+	r.Use(func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Authorization, Content-Type")
+		c.Writer.Header().Set("Access-Control-Max-Age", "86400")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
+		}
+
+		c.Next()
+	})
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
