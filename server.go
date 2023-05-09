@@ -96,12 +96,6 @@ func ginInit(mode string) *gin.Engine {
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Authorization, Content-Type")
 		c.Writer.Header().Set("Access-Control-Max-Age", "86400")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(http.StatusNoContent)
-			return
-		}
-
 		c.Next()
 	})
 	r.GET("/ping", func(c *gin.Context) {
