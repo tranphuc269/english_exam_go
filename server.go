@@ -12,8 +12,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
 	"net/http"
 	"os"
@@ -55,7 +53,6 @@ func main() {
 
 	// StartUp Server
 	app_logger.Logger.Info("Listening and serving " + "HTTP on :" + apiPort + " , " + "MODE:" + mode)
-	r.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	serverMigration()
 	err = r.Run(":" + os.Getenv("API_PORT"))
 	if err != nil {
@@ -90,12 +87,19 @@ func ginInit(mode string) *gin.Engine {
 	// logging all panic to error log
 	r.Use(ginzap.RecoveryWithZap(app_logger.Logger, true))
 	// CORS middleware
+	//r.Use(cors.Default())
 	r.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Authorization, Content-Type")
 		c.Writer.Header().Set("Access-Control-Max-Age", "86400")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(205)
+			c.Next()
+		}
+
 		c.Next()
 	})
 	r.GET("/ping", func(c *gin.Context) {

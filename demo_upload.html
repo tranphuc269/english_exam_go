@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload File</title>
+</head>
+<body>
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="files" id="fileInput">
+    <button type="button" onclick="uploadFile()">Upload</button>
+</form>
+
+<script>
+    function uploadFile() {
+        var fileInput = document.getElementById('fileInput');
+        var file = fileInput.files[0];
+
+        var formData = new FormData();
+        formData.append('files', file);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'http://14.225.192.48/api/exams/file', true);
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                var response = xhr.responseText;
+                console.log(response);
+            } else {
+                console.error('Upload error:', xhr.status);
+            }
+        };
+
+        xhr.send(formData);
+    }
+</script>
+</body>
+</html>
