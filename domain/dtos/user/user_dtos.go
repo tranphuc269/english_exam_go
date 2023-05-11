@@ -29,6 +29,14 @@ type RegisterAccountRequest struct {
 	Role        resource.UserRole `json:"role,omitempty" binding:"required,userRoleEnum"`
 }
 
+type UpdateAccountRequest struct {
+	Name        string `json:"name"`
+	Password    string `json:"password"`
+	DateOfBirth string `json:"date_of_birth"`
+	PhoneNumber string `json:"phone_number"`
+	Address     string `json:"address"`
+}
+
 type UserResponse struct {
 	gorm.Model
 	Name        string    `json:"name"`

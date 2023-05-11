@@ -9,6 +9,7 @@ type Exam struct {
 	gorm.Model
 	ExamName        string         `json:"exam_name"`
 	ExamDescription string         `json:"exam_description"`
+	ListenFile      string         `json:"listen_file"`
 	ExamStartTime   time.Time      `json:"exam_start_time"`
 	ExamEndTime     time.Time      `json:"exam_end_time"`
 	ExamQuestions   []ExamQuestion `json:"exam_questions" gorm:"ForeignKey:ExamId;"`

@@ -10,6 +10,7 @@ import (
 type CreateExamRequest struct {
 	ExamName        string                  `json:"exam_name"`
 	ExamDescription string                  `json:"exam_description"`
+	ListenFile      string                  `json:"listen_file"`
 	ExamStartTime   time.Time               `json:"exam_start_time"  validate:"required,datetime"`
 	ExamEndTime     time.Time               `json:"exam_end_time" validate:"required,datetime"`
 	CreatorId       int                     `json:"creator_id"`
@@ -21,6 +22,7 @@ func (cer CreateExamRequest) CreateExamEntity() entities.Exam {
 		Model:           gorm.Model{},
 		ExamName:        cer.ExamName,
 		ExamDescription: cer.ExamDescription,
+		ListenFile:      cer.ListenFile,
 		ExamStartTime:   cer.ExamStartTime,
 		ExamEndTime:     cer.ExamEndTime,
 		ExamQuestions:   ListQuestionRequestToListQuestionEntity(cer.ExamQuestions),
@@ -102,6 +104,7 @@ type ExamDetailResponse struct {
 	ExamName        string             `json:"exam_name"`
 	ExamDescription string             `json:"exam_description"`
 	ExamStartTime   time.Time          `json:"exam_start_time"`
+	ListenFile      string             `json:"listen_file"`
 	ExamEndTime     time.Time          `json:"exam_end_time"`
 	CreatorId       int                `json:"creator_id"`
 	ExamQuestions   []QuestionResponse `json:"exam_questions"`
@@ -125,6 +128,7 @@ func ParseExamDetailRes(entity *entities.Exam) *ExamDetailResponse {
 		ID:              int(entity.ID),
 		ExamName:        entity.ExamName,
 		ExamDescription: entity.ExamDescription,
+		ListenFile:      entity.ListenFile,
 		ExamStartTime:   entity.ExamStartTime,
 		ExamEndTime:     entity.ExamEndTime,
 		CreatorId:       int(entity.CreatorID),

@@ -6,26 +6,81 @@ import (
 	"english_exam_go/infrastructure/data/repositories/persistence"
 	auth_utils "english_exam_go/utils/auth"
 	"fmt"
+	"time"
 )
 
 type IAuthService interface {
 	Login(ctx context.Context, request dtos.LoginRequest) (*dtos.AuthResponse, error)
 	Register(context.Context, dtos.RegisterAccountRequest) (*dtos.AuthResponse, error)
 	Me(context.Context, string) (*dtos.UserResponse, error)
+	FindById(context.Context, int) (*dtos.UserResponse, error)
+	Update(context.Context, dtos.UpdateAccountRequest, string) error
+	Teachers(context.Context) []*dtos.UserResponse
+	Students(context.Context) []*dtos.UserResponse
 }
 
 type AuthServiceImpl struct {
 	ar persistence.IAuthRepository
 }
 
+func (as AuthServiceImpl) FindById(ctx context.Context, ID int) (*dtos.UserResponse, error) {
+	//TODO implement me
+	userEnt, _ := as.ar.FindById(ctx, ID)
+	fmt.Println(ID)
+	return dtos.UserEntToResponse(userEnt), nil
+}
+
+func (as AuthServiceImpl) Update(ctx context.Context, request dtos.UpdateAccountRequest, email string) error {
+	//TODO implement me
+	currentUser, _ := as.ar.FindUserByEmail(ctx, email)
+	if request.Name != "" {
+		currentUser.Name = request.Name
+	}
+	if request.Password != "" {
+		hashPassword, _ := auth_utils.HashPassword(request.PhoneNumber)
+		currentUser.Password = hashPassword
+	}
+
+	if request.DateOfBirth != "" {
+		date, _ := time.Parse("2006-01-02", request.DateOfBirth)
+		currentUser.DateOfBirth = date
+	}
+	if request.PhoneNumber != "" {
+		currentUser.PhoneNumber = request.PhoneNumber
+	}
+	if request.Address != "" {
+		currentUser.Address = request.Address
+	}
+	err := as.ar.UpdateUser(ctx, currentUser)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (as AuthServiceImpl) Teachers(ctx context.Context) []*dtos.UserResponse {
+	//TODO implement me
+	var result []*dtos.UserResponse
+	userEnts := as.ar.GetUsers(ctx, 3)
+	for _, ent := range userEnts {
+		result = append(result, dtos.UserEntToResponse(ent))
+	}
+	return result
+}
+
+func (as AuthServiceImpl) Students(ctx context.Context) []*dtos.UserResponse {
+	//TODO implement me
+	var result []*dtos.UserResponse
+	userEnts := as.ar.GetUsers(ctx, 2)
+	for _, ent := range userEnts {
+		result = append(result, dtos.UserEntToResponse(ent))
+	}
+	return result
+}
+
 func (as AuthServiceImpl) Me(ctx context.Context, email string) (*dtos.UserResponse, error) {
 	//TODO implement me
 	userEnt, _ := as.ar.FindUserByEmail(ctx, email)
-	//fmt.Printf("userEnt %s", userEnt.Name)
-	//fmt.Printf("err.Error %s", err.Error())
-	//if err != nil {
-	//	fmt.Println("Không tồn tại")
-	//}
 	return dtos.UserEntToResponse(userEnt), nil
 }
 

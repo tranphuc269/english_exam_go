@@ -16,9 +16,13 @@ func (ar AuthRouter) routing(e *gin.RouterGroup) {
 	{
 		be.POST("/login", ar.ac.Login())
 		be.POST("/register", ar.ac.Register())
+		be.GET("/teachers", ar.ac.GetTeachers())
+		be.GET("/students", ar.ac.GetStudents())
 		secured := be.Group("/secured").Use(middleware.Authentication())
 		{
 			secured.GET("/me", ar.ac.Me())
+			secured.PUT("/update", ar.ac.Update())
+			secured.GET("/user/:id", ar.ac.UserDetail())
 		}
 	}
 }

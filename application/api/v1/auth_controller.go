@@ -6,7 +6,9 @@ import (
 	dtos "english_exam_go/domain/dtos/user"
 	"english_exam_go/domain/services"
 	auth_utils "english_exam_go/utils/auth"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"strconv"
 	"strings"
 )
 
@@ -51,6 +53,20 @@ func (ac *AuthController) Register() gin.HandlerFunc {
 	}
 }
 
+func (ac *AuthController) GetTeachers() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		response := ac.as.Teachers(c)
+		http_utils.SuccessHandle(response, c)
+	}
+}
+
+func (ac *AuthController) GetStudents() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		response := ac.as.Students(c)
+		http_utils.SuccessHandle(response, c)
+	}
+}
+
 func (ac *AuthController) Me() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
@@ -65,5 +81,42 @@ func (ac *AuthController) Me() gin.HandlerFunc {
 		//	exception.Handle(err, c)
 		//}
 		http_utils.SuccessHandle(response, c)
+	}
+}
+
+func (ac *AuthController) UserDetail() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var params = c.Param("id")
+		id, err := strconv.Atoi(params)
+		if err != nil {
+			fmt.Printf("err %s\n", err)
+			exception.Handle(err, c)
+			return
+		}
+
+		response, _ := ac.as.FindById(c, id)
+		http_utils.SuccessHandle(response, c)
+	}
+}
+
+func (ac *AuthController) Update() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var updateRequest dtos.UpdateAccountRequest
+		if err := c.ShouldBind(&updateRequest); err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		tokenString := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
+
+		claim, _ := auth_utils.ParseToken(tokenString)
+		//if err != nil {
+		//	exception.Handle(err, c)
+		//}
+
+		_ = ac.as.Update(c, updateRequest, claim.Email)
+		//if err != nil {
+		//	exception.Handle(err, c)
+		//}
+		http_utils.SuccessHandle(true, c)
 	}
 }
