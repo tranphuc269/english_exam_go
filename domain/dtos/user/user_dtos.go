@@ -44,6 +44,7 @@ type UserResponse struct {
 	PhoneNumber string    `json:"phone_number"`
 	Address     string    `json:"address"`
 	DateOfBirth time.Time `json:"date_of_birth"`
+	Role        int       `json:"role"`
 }
 
 func (rar *RegisterAccountRequest) RegisterAccountToUserEnt() (*entities.User, error) {
@@ -75,5 +76,6 @@ func UserEntToResponse(ue *entities.User) *UserResponse {
 		PhoneNumber: ue.PhoneNumber,
 		Address:     ue.Address,
 		DateOfBirth: ue.DateOfBirth,
+		Role:        ue.Role.ToInt(),
 	}
 }

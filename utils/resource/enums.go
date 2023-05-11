@@ -17,6 +17,18 @@ func (role UserRole) IsValid() bool {
 	return false
 }
 
+func (role UserRole) ToInt() int {
+	switch role {
+	case Admin:
+		return 1
+	case Student:
+		return 2
+	case Lecturer:
+		return 3
+	}
+	return 0
+}
+
 func (role UserRole) ToString() string {
 	return [...]string{"Admin", "Student", "Lecturer"}[role-1]
 }
