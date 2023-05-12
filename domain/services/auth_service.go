@@ -128,7 +128,6 @@ func (as AuthServiceImpl) Login(ctx context.Context, request dtos.LoginRequest) 
 		ExpiresIn:   1 * 60 * 60,
 	}
 	return &authRes, err
-
 }
 
 func CreateAuthService(ar persistence.IAuthRepository) IAuthService {

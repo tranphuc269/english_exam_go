@@ -65,7 +65,7 @@ func (ar AuthRepositoryImpl) CreateUser(ctx context.Context, ent *entities.User)
 func (ar AuthRepositoryImpl) FindUserByEmail(ctx context.Context, email string) (*entities.User, error) {
 	db := repositories.GetConn()
 	userEnt := entities.User{}
-	err := db.Model(&entities.User{}).First(&userEnt)
+	err := db.Model(&entities.User{}).Where("email = ?", email).Order("created_at").First(&userEnt)
 	if err.Error != nil {
 		return nil, &repositories.NotFoundError{
 			Msg:           repositories.DefaultNotFoundMsg,
