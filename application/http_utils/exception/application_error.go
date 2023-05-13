@@ -1,7 +1,8 @@
 package exception
 
-type applicationError interface {
-	Code() string
+type ApplicationError interface {
+	Code() int
 	Message() []string
 	HTTPStatus() int
 }
+

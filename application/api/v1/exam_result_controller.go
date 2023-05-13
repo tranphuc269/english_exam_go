@@ -39,7 +39,7 @@ func (esc ExamResultController) GetListExam() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		userId, _ := auth_utils.GetUserIdFromToken(c)
 		//if err != nil {
-		//	exception.Handle(err, c)
+		//	domain_exception.Handle(err, c)
 		//	return
 		//}
 		exams := esc.ess.GetYourExamDone(c, userId)

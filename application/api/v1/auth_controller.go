@@ -73,12 +73,12 @@ func (ac *AuthController) Me() gin.HandlerFunc {
 
 		claim, _ := auth_utils.ParseToken(tokenString)
 		//if err != nil {
-		//	exception.Handle(err, c)
+		//	domain_exception.Handle(err, c)
 		//}
 
 		response, _ := ac.as.Me(c, claim.Email)
 		//if err != nil {
-		//	exception.Handle(err, c)
+		//	domain_exception.Handle(err, c)
 		//}
 		http_utils.SuccessHandle(response, c)
 	}
@@ -110,12 +110,12 @@ func (ac *AuthController) Update() gin.HandlerFunc {
 
 		claim, _ := auth_utils.ParseToken(tokenString)
 		//if err != nil {
-		//	exception.Handle(err, c)
+		//	domain_exception.Handle(err, c)
 		//}
 
 		_ = ac.as.Update(c, updateRequest, claim.Email)
 		//if err != nil {
-		//	exception.Handle(err, c)
+		//	domain_exception.Handle(err, c)
 		//}
 		http_utils.SuccessHandle(true, c)
 	}

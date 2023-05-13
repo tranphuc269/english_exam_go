@@ -10,7 +10,7 @@ import (
 )
 
 func Handle(err error, c *gin.Context) {
-	ae, ok := errors.Cause(err).(applicationError)
+	ae, ok := errors.Cause(err).(ApplicationError)
 	if ok {
 		handleAppError(ae, c, err)
 		return
@@ -24,8 +24,8 @@ func Handle(err error, c *gin.Context) {
 
 }
 
-func handleAppError(ae applicationError, c *gin.Context, err error) {
-	app_logger.Logger.Info(fmt.Sprintf("application error occured: %s", err.Error()), zap.String("errorCode", ae.Code()))
+func handleAppError(ae ApplicationError, c *gin.Context, err error) {
+	app_logger.Logger.Info(fmt.Sprintf("application error occured: %s", err.Error()), zap.String("errorCode", string(rune(ae.Code()))))
 
 	c.JSON(ae.HTTPStatus(),
 		gin.H{"code": ae.Code(), "message": ae.Message(), "status": ae.HTTPStatus()})

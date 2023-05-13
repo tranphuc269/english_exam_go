@@ -2,6 +2,7 @@ package entities
 
 import (
 	"english_exam_go/utils/resource"
+	"fmt"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"time"
@@ -20,6 +21,8 @@ type User struct {
 }
 
 func (ue *User) CheckPassword(providedPassword string) error {
-	_ = bcrypt.CompareHashAndPassword([]byte(ue.Password), []byte(providedPassword))
-	return nil
+	fmt.Printf("providedPassword, %s\n", providedPassword)
+	fmt.Printf("ue.Password, %s\n", ue.Password)
+	err := bcrypt.CompareHashAndPassword([]byte(ue.Password), []byte(providedPassword))
+	return err
 }

@@ -37,7 +37,7 @@ func (as AuthServiceImpl) Update(ctx context.Context, request dtos.UpdateAccount
 		currentUser.Name = request.Name
 	}
 	if request.Password != "" {
-		hashPassword, _ := auth_utils.HashPassword(request.PhoneNumber)
+		hashPassword, _ := auth_utils.HashPassword(request.Password)
 		currentUser.Password = hashPassword
 	}
 
@@ -128,6 +128,7 @@ func (as AuthServiceImpl) Login(ctx context.Context, request dtos.LoginRequest) 
 		ExpiresIn:   1 * 60 * 60,
 	}
 	return &authRes, err
+
 }
 
 func CreateAuthService(ar persistence.IAuthRepository) IAuthService {
