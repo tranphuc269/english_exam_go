@@ -86,6 +86,10 @@ func (as AuthServiceImpl) Me(ctx context.Context, email string) (*dtos.UserRespo
 
 func (as AuthServiceImpl) Register(ctx context.Context, request dtos.RegisterAccountRequest) (*dtos.AuthResponse, error) {
 	//TODO implement me
+	_, err := as.Me(ctx, request.Email)
+	if err != nil {
+		return nil, err
+	}
 	userEnt, err := request.RegisterAccountToUserEnt()
 	if err != nil {
 		return nil, err

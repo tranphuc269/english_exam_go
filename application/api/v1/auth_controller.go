@@ -8,6 +8,7 @@ import (
 	auth_utils "english_exam_go/utils/auth"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"strconv"
 	"strings"
 )
@@ -24,12 +25,14 @@ func (ac *AuthController) Login() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var loginRequest dtos.LoginRequest
 		if err := c.ShouldBindJSON(&loginRequest); err != nil {
-			exception.Handle(err, c)
+			c.JSON(http.StatusInternalServerError,
+				gin.H{"code": 401, "message": "Tài khoản hoặc mật khẩu không chính xác", "status": http.StatusUnauthorized})
 			return
 		}
 		authRes, err := ac.as.Login(c, loginRequest)
 		if err != nil {
-			exception.Handle(err, c)
+			c.JSON(http.StatusInternalServerError,
+				gin.H{"code": 401, "message": "Tài khoản hoặc mật khẩu không chính xác", "status": http.StatusUnauthorized})
 			return
 		}
 		http_utils.SuccessHandle(*authRes, c)

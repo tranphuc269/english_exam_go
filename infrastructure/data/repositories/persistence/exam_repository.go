@@ -70,7 +70,7 @@ func (er ExamRepository) FindExamsByCreatorId(ctx context.Context, UserID uint) 
 	//TODO implement me
 	db := repositories.GetConn()
 	var exams []*entities.Exam
-	result := db.Where("creator_id=?", UserID).Find(&exams)
+	result := db.Where("creator_id=?", UserID).Order("created_at").Find(&exams)
 	return exams, result.Error
 }
 
