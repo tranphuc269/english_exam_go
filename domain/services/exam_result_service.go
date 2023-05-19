@@ -54,7 +54,6 @@ func (ers ExamResultServiceImpl) SubmitExam(ctx context.Context,
 	for _, reqQues := range submitRequest.SubmissionResults {
 		confRequestQuestion[reqQues.QuestionId] = reqQues.AnswerId
 	}
-
 	for _, ques := range examDetail.ExamQuestions {
 		if ques.QuestionCase == resource.QuestionReading {
 			if confRequestQuestion[int(ques.ID)] == ques.GetCorrectAnswer() {
@@ -65,7 +64,6 @@ func (ers ExamResultServiceImpl) SubmitExam(ctx context.Context,
 				numCorrectListening++
 			}
 		}
-
 	}
 	readingScore := resource.WritingToeicResult[numCorrectReading]
 	listeningScore := resource.ReadingToeicResult[numCorrectListening]
