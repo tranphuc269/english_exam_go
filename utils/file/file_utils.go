@@ -37,14 +37,18 @@ func UploadFile(c *gin.Context) {
 	var form Form
 	_ = c.ShouldBind(&form)
 	// Validate inputs
-	valid, message := validateUploadFiles(form.Files)
+	successPaths := UploadFileToS3(form.Files)
+	c.JSON(http.StatusOK, gin.H{
+		"paths": successPaths,
+	})
+}
+
+func UploadFileToS3(files []*multipart.FileHeader) []string {
+	valid, message := validateUploadFiles(files)
 
 	if !valid {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": message,
-			"path":    "validateUploadFiles(form.Files)",
-		})
-		return
+		fmt.Println(message)
+		return []string{}
 	}
 
 	// get credentials
@@ -53,11 +57,7 @@ func UploadFile(c *gin.Context) {
 	if err != nil {
 		fmt.Printf("bad credentials: %s", err)
 		// Response to client
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "bad credentials",
-			"path":    "creds.Get()",
-		})
-		return
+		return []string{}
 	}
 
 	cfg := aws.NewConfig().WithRegion(awsBucketRegion).WithCredentials(creds)
@@ -66,11 +66,7 @@ func UploadFile(c *gin.Context) {
 	if err != nil {
 		fmt.Printf("Failed creating new session: %s", err)
 		// Response to client
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Failed creating new session",
-			"path":    "session.NewSession(cfg)",
-		})
-		return
+		return []string{}
 	}
 
 	svc := s3.New(ss, cfg)
@@ -78,18 +74,14 @@ func UploadFile(c *gin.Context) {
 	now := time.Now()
 	nowRFC3339 := now.Format(time.RFC3339)
 
-	successPaths := make([]string, len(form.Files))
+	successPaths := make([]string, len(files))
 	pathNumber := 0
-	for _, formFile := range form.Files {
+	for _, formFile := range files {
 		binaryFile, err := readFile(formFile)
 
 		if err != nil {
 			// Response to client
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "Failed read file",
-				"path":    " readFile(formFile)",
-			})
-			return
+			return []string{}
 		}
 
 		path := "/media/" + nowRFC3339 + "-" + formFile.Filename
@@ -106,11 +98,7 @@ func UploadFile(c *gin.Context) {
 		if err != nil {
 			fmt.Println("Error " + err.Error())
 			// Response to client
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "Failed CreateMultipartUpload",
-				"path":    "svc.CreateMultipartUpload(input)",
-			})
-			return
+			return []string{}
 		}
 		fmt.Println("Created multipart upload request")
 
@@ -136,11 +124,7 @@ func UploadFile(c *gin.Context) {
 					fmt.Println(err.Error())
 				}
 				// Response to client
-				c.JSON(http.StatusInternalServerError, gin.H{
-					"message": "Failed abortMultipartUpload",
-					"path":    "abortMultipartUpload(svc, resp)",
-				})
-				return
+				return []string{}
 			}
 			// else append completed part to a whole
 			remaining -= partLength
@@ -153,11 +137,7 @@ func UploadFile(c *gin.Context) {
 		if err != nil {
 			fmt.Println(err.Error())
 			// Response to client
-			c.JSON(http.StatusInternalServerError, gin.H{
-				"message": "Failed completeMultipartUpload",
-				"path":    "completeMultipartUpload(svc, resp, completedParts)",
-			})
-			return
+			return []string{}
 		}
 
 		fmt.Printf("Successfully uploaded file: %s\n", completeResponse.String())
@@ -173,10 +153,7 @@ func UploadFile(c *gin.Context) {
 		//	log.Fatalf("Failed saving file %v to disk", formFile.Filename)
 		//}
 	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"paths": successPaths,
-	})
+	return successPaths
 }
 
 func validateUploadFiles(files []*multipart.FileHeader) (bool, string) {

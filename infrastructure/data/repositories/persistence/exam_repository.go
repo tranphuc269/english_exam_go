@@ -10,6 +10,7 @@ import (
 
 type IExamRepository interface {
 	CreateExam(context.Context, *entities.Exam) error
+	UpdateExam(context.Context, *entities.Exam) error
 	FindExamById(context.Context, uint) (*entities.Exam, error)
 	FindAllExams(ctx context.Context) ([]*entities.Exam, error)
 	FindExamsByCreatorId(context.Context, uint) ([]*entities.Exam, error)
@@ -42,6 +43,29 @@ func (er ExamRepository) CreateExam(ctx context.Context, exam *entities.Exam) er
 	if result.Error != nil {
 		return &repositories.RdbRuntimeError{
 			ErrMsg:        fmt.Sprintf("[infrastructure.data.repositories.persistence.CreateExam] fail to insert Exam to Database"),
+			OriginalError: result.Error,
+		}
+	}
+	return nil
+}
+
+func (er ExamRepository) UpdateExam(ctx context.Context, exam *entities.Exam) error {
+	//TODO implement me
+	db := repositories.GetConn()
+	//err := db.Model(&exam).Association("ExamQuestions").Replace(exam.ExamQuestions)
+	//if err != nil {
+	//	return err
+	//}
+
+	for _, ques := range exam.ExamQuestions {
+		ques.ExamId = int(exam.ID)
+	}
+	result := db.Updates(exam.ExamQuestions)
+	_ = db.Updates(exam)
+	fmt.Printf("result.Error : %s\n", result.Error)
+	if result.Error != nil {
+		return &repositories.RdbRuntimeError{
+			ErrMsg:        fmt.Sprintf("[infrastructure.data.repositories.persistence.UpdateExam] fail to update Exam to Database"),
 			OriginalError: result.Error,
 		}
 	}

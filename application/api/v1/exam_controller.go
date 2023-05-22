@@ -6,7 +6,6 @@ import (
 	dtos "english_exam_go/domain/dtos/exam"
 	"english_exam_go/domain/services"
 	auth_utils "english_exam_go/utils/auth"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"strconv"
 	"strings"
@@ -25,13 +24,40 @@ func (ec *ExamController) CreateExam() gin.HandlerFunc {
 		tokenString := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
 
 		claim, _ := auth_utils.ParseToken(tokenString)
-		var createExamRequest dtos.CreateExamRequest
+		var updateRequest dtos.UpsertExamRequest
+		if err := c.ShouldBindJSON(&updateRequest); err != nil {
+			exception.Handle(err, c)
+			//return
+		}
+		updateRequest.CreatorId = claim.UserID
+		err := ec.es.CreateExam(c, &updateRequest)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		http_utils.SuccessHandle(updateRequest, c)
+	}
+}
+
+func (ec *ExamController) UpdateExam() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tokenString := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
+
+		claim, _ := auth_utils.ParseToken(tokenString)
+		var createExamRequest dtos.UpsertExamRequest
+		var params = c.Param("id")
+		ID, err := strconv.Atoi(params)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
 		if err := c.ShouldBindJSON(&createExamRequest); err != nil {
 			exception.Handle(err, c)
 			//return
 		}
 		createExamRequest.CreatorId = claim.UserID
-		err := ec.es.CreateExam(c, &createExamRequest)
+		createExamRequest.Id = ID
+		err = ec.es.UpdateExam(c, &createExamRequest)
 		if err != nil {
 			exception.Handle(err, c)
 			return
@@ -51,16 +77,32 @@ func (ec *ExamController) GetExams() gin.HandlerFunc {
 	}
 }
 
-func (ec *ExamController) GetDetailExam() gin.HandlerFunc {
+func (ec *ExamController) GetDetailExamRoleUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var params = c.Param("id")
-		fmt.Println(params)
 		ID, err := strconv.Atoi(params)
 		if err != nil {
 			exception.Handle(err, c)
 			return
 		}
-		exam, _ := ec.es.GetDetailExams(c, ID)
+		exam, _ := ec.es.GetDetailExamRoleUser(c, ID)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		http_utils.SuccessHandle(exam, c)
+	}
+}
+
+func (ec *ExamController) GetDetailExamRoleAdmin() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var params = c.Param("id")
+		ID, err := strconv.Atoi(params)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		exam, _ := ec.es.GetDetailExamRoleAdmin(c, ID)
 		if err != nil {
 			exception.Handle(err, c)
 			return

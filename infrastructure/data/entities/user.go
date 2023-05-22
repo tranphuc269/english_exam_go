@@ -14,6 +14,8 @@ type User struct {
 	Email       string            `json:"email"`
 	Password    string            `json:"password"`
 	PhoneNumber string            `json:"phone_number"`
+	Code        string            `json:"code"`
+	Avatar      string            `json:"avatar"`
 	Address     string            `json:"address"`
 	DateOfBirth time.Time         `json:"date_of_birth"`
 	Role        resource.UserRole `json:"role"`

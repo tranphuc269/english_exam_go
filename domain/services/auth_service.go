@@ -21,6 +21,7 @@ type IAuthService interface {
 
 type AuthServiceImpl struct {
 	ar persistence.IAuthRepository
+	//fs FileSer
 }
 
 func (as AuthServiceImpl) FindById(ctx context.Context, ID int) (*dtos.UserResponse, error) {
@@ -44,6 +45,13 @@ func (as AuthServiceImpl) Update(ctx context.Context, request dtos.UpdateAccount
 	if request.DateOfBirth != "" {
 		date, _ := time.Parse("2006-01-02", request.DateOfBirth)
 		currentUser.DateOfBirth = date
+	}
+
+	if request.Avatar != "" {
+		currentUser.Avatar = request.Avatar
+	}
+	if request.Code != "" {
+		currentUser.Code = request.Code
 	}
 	if request.PhoneNumber != "" {
 		currentUser.PhoneNumber = request.PhoneNumber

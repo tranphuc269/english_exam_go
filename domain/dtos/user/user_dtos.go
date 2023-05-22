@@ -20,21 +20,25 @@ type AuthResponse struct {
 }
 
 type RegisterAccountRequest struct {
-	Name        string            `json:"name"`
-	Email       string            `json:"email"`
-	Password    string            `json:"password"`
-	DateOfBirth string            `json:"date_of_birth"`
-	PhoneNumber string            `json:"phone_number"`
-	Address     string            `json:"address"`
-	Role        resource.UserRole `json:"role,omitempty" binding:"required,userRoleEnum"`
+	Name        string            `form:"name"`
+	Email       string            `form:"email"`
+	Password    string            `form:"password"`
+	Code        string            `form:"code"`
+	DateOfBirth string            `form:"date_of_birth"`
+	Avatar      string            `form:"avatar"`
+	PhoneNumber string            `form:"phone_number"`
+	Address     string            `form:"address"`
+	Role        resource.UserRole `form:"role,omitempty" binding:"required,userRoleEnum"`
 }
 
 type UpdateAccountRequest struct {
-	Name        string `json:"name"`
-	Password    string `json:"password"`
-	DateOfBirth string `json:"date_of_birth"`
-	PhoneNumber string `json:"phone_number"`
-	Address     string `json:"address"`
+	Name        string `form:"name"`
+	Password    string `form:"password"`
+	DateOfBirth string `form:"date_of_birth"`
+	Avatar      string `form:"avatar"`
+	Code        string `form:"code"`
+	PhoneNumber string `form:"phone_number"`
+	Address     string `form:"address"`
 }
 
 type UserResponse struct {
@@ -42,6 +46,8 @@ type UserResponse struct {
 	Name        string    `json:"name"`
 	Email       string    `json:"email"`
 	PhoneNumber string    `json:"phone_number"`
+	Code        string    `json:"code"`
+	Avatar      string    `json:"avatar"`
 	Address     string    `json:"address"`
 	DateOfBirth time.Time `json:"date_of_birth"`
 	Role        int       `json:"role"`
@@ -65,6 +71,8 @@ func (rar *RegisterAccountRequest) RegisterAccountToUserEnt() (*entities.User, e
 		Address:     rar.Address,
 		DateOfBirth: date,
 		Role:        rar.Role,
+		Code:        rar.Code,
+		Avatar:      rar.Avatar,
 	}, nil
 }
 
@@ -77,5 +85,7 @@ func UserEntToResponse(ue *entities.User) *UserResponse {
 		Address:     ue.Address,
 		DateOfBirth: ue.DateOfBirth,
 		Role:        ue.Role.ToInt(),
+		Code:        ue.Code,
+		Avatar:      ue.Avatar,
 	}
 }

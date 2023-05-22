@@ -4,18 +4,31 @@ import (
 	"context"
 	dtos "english_exam_go/domain/dtos/exam"
 	"english_exam_go/infrastructure/data/repositories/persistence"
+	"fmt"
 )
 
 type IExamService interface {
-	CreateExam(ctx context.Context, exam *dtos.CreateExamRequest) error
+	CreateExam(ctx context.Context, exam *dtos.UpsertExamRequest) error
+	UpdateExam(ctx context.Context, exam *dtos.UpsertExamRequest) error
 	GetAllExams(ctx context.Context) ([]*dtos.ExamListResponse, error)
 	GetExamByCreatorID(ctx context.Context, UserID int) ([]*dtos.ExamListResponse, error)
 	GetExamByTakerID(ctx context.Context, UserID int) ([]*dtos.ExamListResponse, error)
-	GetDetailExams(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error)
+	GetDetailExamRoleUser(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error)
+	GetDetailExamRoleAdmin(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error)
 }
 
 type ExamServiceImpl struct {
 	er persistence.IExamRepository
+}
+
+func (es ExamServiceImpl) GetDetailExamRoleAdmin(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error) {
+	//TODO implement me
+	fmt.Println("hello world")
+	examEnts, err := es.er.FindExamById(ctx, uint(ID))
+	if err != nil {
+		return nil, err
+	}
+	return dtos.ParseExamDetailAdminRes(examEnts), nil
 }
 
 func (es ExamServiceImpl) GetExamByCreatorID(ctx context.Context, UserID int) ([]*dtos.ExamListResponse, error) {
@@ -46,7 +59,7 @@ func (es ExamServiceImpl) GetExamByTakerID(ctx context.Context, UserID int) ([]*
 	return responseExams, nil
 }
 
-func (es ExamServiceImpl) GetDetailExams(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error) {
+func (es ExamServiceImpl) GetDetailExamRoleUser(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error) {
 	//TODO implement me
 	examEnts, err := es.er.FindExamById(ctx, uint(ID))
 	if err != nil {
@@ -69,10 +82,20 @@ func (es ExamServiceImpl) GetAllExams(ctx context.Context) ([]*dtos.ExamListResp
 	return responseExams, nil
 }
 
-func (es ExamServiceImpl) CreateExam(ctx context.Context, exam *dtos.CreateExamRequest) error {
+func (es ExamServiceImpl) CreateExam(ctx context.Context, exam *dtos.UpsertExamRequest) error {
 	//TODO implement me
 	examEnt := exam.CreateExamEntity()
 	err := es.er.CreateExam(ctx, &examEnt)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (es ExamServiceImpl) UpdateExam(ctx context.Context, exam *dtos.UpsertExamRequest) error {
+	//TODO implement me
+	examEnt := exam.CreateExamEntity()
+	err := es.er.UpdateExam(ctx, &examEnt)
 	if err != nil {
 		return err
 	}

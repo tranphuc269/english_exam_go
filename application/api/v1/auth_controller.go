@@ -6,8 +6,10 @@ import (
 	dtos "english_exam_go/domain/dtos/user"
 	"english_exam_go/domain/services"
 	auth_utils "english_exam_go/utils/auth"
+	"english_exam_go/utils/file"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 	"strings"
@@ -45,6 +47,16 @@ func (ac *AuthController) Register() gin.HandlerFunc {
 		if err := c.ShouldBind(&registerRequest); err != nil {
 			exception.Handle(err, c)
 			return
+		}
+		avatar, err := c.FormFile("file_avatar")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "No file uploaded",
+			})
+			return
+		} else {
+			urls := file.UploadFileToS3([]*multipart.FileHeader{avatar})
+			registerRequest.Avatar = urls[0]
 		}
 
 		authRes, err := ac.as.Register(c, registerRequest)
@@ -115,7 +127,16 @@ func (ac *AuthController) Update() gin.HandlerFunc {
 		//if err != nil {
 		//	domain_exception.Handle(err, c)
 		//}
-
+		avatar, err := c.FormFile("file_avatar")
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": err,
+			})
+			return
+		} else {
+			urls := file.UploadFileToS3([]*multipart.FileHeader{avatar})
+			updateRequest.Avatar = urls[0]
+		}
 		_ = ac.as.Update(c, updateRequest, claim.Email)
 		//if err != nil {
 		//	domain_exception.Handle(err, c)

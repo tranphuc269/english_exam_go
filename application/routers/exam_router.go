@@ -16,13 +16,15 @@ func (er ExamRouter) routing(e *gin.RouterGroup) {
 	be := e.Group("/exams")
 	{
 		be.GET("/", er.ec.GetExams())
-		be.GET("/:id", er.ec.GetDetailExam())
+		be.GET("/:id", er.ec.GetDetailExamRoleUser())
+		be.GET("/admin/:id", er.ec.GetDetailExamRoleAdmin())
 		be.GET("/creators/:id", er.ec.GetExamsByCreatorID())
 		be.GET("/takers/:id", er.ec.GetExamsByCreatorID())
 		be.POST("/file", file.UploadFile)
 		secured := be.Group("/secured").Use(middleware.Authentication())
 		{
 			secured.POST("/", er.ec.CreateExam())
+			secured.PUT("/:id", er.ec.UpdateExam())
 		}
 	}
 }
