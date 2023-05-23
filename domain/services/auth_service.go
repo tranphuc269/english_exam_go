@@ -15,8 +15,8 @@ type IAuthService interface {
 	Me(context.Context, string) (*dtos.UserResponse, error)
 	FindById(context.Context, int) (*dtos.UserResponse, error)
 	Update(context.Context, dtos.UpdateAccountRequest, string) error
-	Teachers(context.Context) []*dtos.UserResponse
-	Students(context.Context) []*dtos.UserResponse
+	Teachers(context.Context, string, string) []*dtos.UserResponse
+	Students(context.Context, string) []*dtos.UserResponse
 }
 
 type AuthServiceImpl struct {
@@ -27,7 +27,6 @@ type AuthServiceImpl struct {
 func (as AuthServiceImpl) FindById(ctx context.Context, ID int) (*dtos.UserResponse, error) {
 	//TODO implement me
 	userEnt, _ := as.ar.FindById(ctx, ID)
-	fmt.Println(ID)
 	return dtos.UserEntToResponse(userEnt), nil
 }
 
@@ -66,20 +65,20 @@ func (as AuthServiceImpl) Update(ctx context.Context, request dtos.UpdateAccount
 	return nil
 }
 
-func (as AuthServiceImpl) Teachers(ctx context.Context) []*dtos.UserResponse {
+func (as AuthServiceImpl) Teachers(ctx context.Context, name string, code string) []*dtos.UserResponse {
 	//TODO implement me
 	var result []*dtos.UserResponse
-	userEnts := as.ar.GetUsers(ctx, 3)
+	userEnts := as.ar.GetUsers(ctx, 3, name, code)
 	for _, ent := range userEnts {
 		result = append(result, dtos.UserEntToResponse(ent))
 	}
 	return result
 }
 
-func (as AuthServiceImpl) Students(ctx context.Context) []*dtos.UserResponse {
+func (as AuthServiceImpl) Students(ctx context.Context, code string) []*dtos.UserResponse {
 	//TODO implement me
 	var result []*dtos.UserResponse
-	userEnts := as.ar.GetUsers(ctx, 2)
+	userEnts := as.ar.GetUsers(ctx, 2, "", code)
 	for _, ent := range userEnts {
 		result = append(result, dtos.UserEntToResponse(ent))
 	}

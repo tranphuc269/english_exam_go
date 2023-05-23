@@ -70,14 +70,17 @@ func (ac *AuthController) Register() gin.HandlerFunc {
 
 func (ac *AuthController) GetTeachers() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		response := ac.as.Teachers(c)
+		var name, _ = c.GetQuery("name")
+		var code, _ = c.GetQuery("code")
+		response := ac.as.Teachers(c, name, code)
 		http_utils.SuccessHandle(response, c)
 	}
 }
 
 func (ac *AuthController) GetStudents() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		response := ac.as.Students(c)
+		var code, _ = c.GetQuery("code")
+		response := ac.as.Students(c, code)
 		http_utils.SuccessHandle(response, c)
 	}
 }
