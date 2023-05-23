@@ -11,6 +11,7 @@ import (
 type IExamRepository interface {
 	CreateExam(context.Context, *entities.Exam) error
 	UpdateExam(context.Context, *entities.Exam) error
+	UpdateQuestion(context.Context, *entities.ExamQuestion) error
 	FindExamById(context.Context, uint) (*entities.Exam, error)
 	FindAllExams(ctx context.Context) ([]*entities.Exam, error)
 	FindExamsByCreatorId(context.Context, uint) ([]*entities.Exam, error)
@@ -52,23 +53,44 @@ func (er ExamRepository) CreateExam(ctx context.Context, exam *entities.Exam) er
 func (er ExamRepository) UpdateExam(ctx context.Context, exam *entities.Exam) error {
 	//TODO implement me
 	db := repositories.GetConn()
-	//err := db.Model(&exam).Association("ExamQuestions").Replace(exam.ExamQuestions)
-	//if err != nil {
-	//	return err
-	//}
 
-	for _, ques := range exam.ExamQuestions {
-		ques.ExamId = int(exam.ID)
+	updateData := map[string]interface{}{
+		"ExamName":        exam.ExamName,
+		"ExamDescription": exam.ExamDescription,
+		"ListenFile":      exam.ListenFile,
+		"ExamStartTime":   exam.ExamStartTime,
+		"ExamEndTime":     exam.ExamEndTime,
 	}
-	result := db.Updates(exam.ExamQuestions)
-	_ = db.Updates(exam)
-	fmt.Printf("result.Error : %s\n", result.Error)
-	if result.Error != nil {
-		return &repositories.RdbRuntimeError{
-			ErrMsg:        fmt.Sprintf("[infrastructure.data.repositories.persistence.UpdateExam] fail to update Exam to Database"),
-			OriginalError: result.Error,
+
+	if err := db.Model(&exam).Updates(updateData).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (er ExamRepository) UpdateQuestion(ctx context.Context, question *entities.ExamQuestion) error {
+	//TODO implement me
+	db := repositories.GetConn()
+
+	updateData := map[string]interface{}{
+		"QuestionCase": question.QuestionCase,
+		"QuestionText": question.QuestionText,
+		"File":         question.File,
+	}
+
+	for _, ans := range question.Answers {
+		updateAns := map[string]interface{}{
+			"Content":   ans.Content,
+			"IsCorrect": ans.IsCorrect,
 		}
+		db.Model(&ans).Updates(updateAns)
 	}
+
+	if err := db.Model(&question).Updates(updateData).Error; err != nil {
+		return err
+	}
+
 	return nil
 }
 

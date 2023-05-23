@@ -44,25 +44,51 @@ func (ec *ExamController) UpdateExam() gin.HandlerFunc {
 		tokenString := strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
 
 		claim, _ := auth_utils.ParseToken(tokenString)
-		var createExamRequest dtos.UpsertExamRequest
+		var updateExamRequest dtos.UpsertExamRequest
 		var params = c.Param("id")
 		ID, err := strconv.Atoi(params)
 		if err != nil {
 			exception.Handle(err, c)
 			return
 		}
-		if err := c.ShouldBindJSON(&createExamRequest); err != nil {
+		if err := c.ShouldBindJSON(&updateExamRequest); err != nil {
 			exception.Handle(err, c)
 			//return
 		}
-		createExamRequest.CreatorId = claim.UserID
-		createExamRequest.Id = ID
-		err = ec.es.UpdateExam(c, &createExamRequest)
+		updateExamRequest.CreatorId = claim.UserID
+		updateExamRequest.Id = ID
+		err = ec.es.UpdateExam(c, &updateExamRequest)
 		if err != nil {
 			exception.Handle(err, c)
 			return
 		}
-		http_utils.SuccessHandle(createExamRequest, c)
+		http_utils.SuccessHandle(updateExamRequest, c)
+	}
+}
+
+func (ec *ExamController) UpdateQuestion() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		_ = strings.TrimPrefix(c.GetHeader("Authorization"), "Bearer ")
+
+		//claim, _ := auth_utils.ParseToken(tokenString)
+		var questionRequest dtos.UpsertQuestionRequest
+		var params = c.Param("id")
+		ID, err := strconv.Atoi(params)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		if err := c.ShouldBindJSON(&questionRequest); err != nil {
+			exception.Handle(err, c)
+			//return
+		}
+		questionRequest.Id = ID
+		err = ec.es.UpdateExamQuestion(c, &questionRequest)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		http_utils.SuccessHandle(questionRequest, c)
 	}
 }
 

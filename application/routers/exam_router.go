@@ -25,6 +25,7 @@ func (er ExamRouter) routing(e *gin.RouterGroup) {
 		{
 			secured.POST("/", er.ec.CreateExam())
 			secured.PUT("/:id", er.ec.UpdateExam())
+			secured.PUT("/question/:id", er.ec.UpdateQuestion())
 		}
 	}
 }

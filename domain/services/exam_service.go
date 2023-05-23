@@ -4,12 +4,12 @@ import (
 	"context"
 	dtos "english_exam_go/domain/dtos/exam"
 	"english_exam_go/infrastructure/data/repositories/persistence"
-	"fmt"
 )
 
 type IExamService interface {
 	CreateExam(ctx context.Context, exam *dtos.UpsertExamRequest) error
 	UpdateExam(ctx context.Context, exam *dtos.UpsertExamRequest) error
+	UpdateExamQuestion(ctx context.Context, question *dtos.UpsertQuestionRequest) error
 	GetAllExams(ctx context.Context) ([]*dtos.ExamListResponse, error)
 	GetExamByCreatorID(ctx context.Context, UserID int) ([]*dtos.ExamListResponse, error)
 	GetExamByTakerID(ctx context.Context, UserID int) ([]*dtos.ExamListResponse, error)
@@ -23,7 +23,6 @@ type ExamServiceImpl struct {
 
 func (es ExamServiceImpl) GetDetailExamRoleAdmin(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error) {
 	//TODO implement me
-	fmt.Println("hello world")
 	examEnts, err := es.er.FindExamById(ctx, uint(ID))
 	if err != nil {
 		return nil, err
@@ -96,6 +95,16 @@ func (es ExamServiceImpl) UpdateExam(ctx context.Context, exam *dtos.UpsertExamR
 	//TODO implement me
 	examEnt := exam.CreateExamEntity()
 	err := es.er.UpdateExam(ctx, &examEnt)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (es ExamServiceImpl) UpdateExamQuestion(ctx context.Context, question *dtos.UpsertQuestionRequest) error {
+	//TODO implement me
+	questionEnt := question.CreateQuestionEntity()
+	err := es.er.UpdateQuestion(ctx, &questionEnt)
 	if err != nil {
 		return err
 	}
