@@ -72,7 +72,17 @@ func (ac *AuthController) GetTeachers() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var name, _ = c.GetQuery("name")
 		var code, _ = c.GetQuery("code")
-		response := ac.as.Teachers(c, name, code)
+		var offsetStr, _ = c.GetQuery("offset")
+		var limitStr, _ = c.GetQuery("limit")
+		offsetInt, err := strconv.Atoi(offsetStr)
+		if err != nil {
+			offsetInt = 0
+		}
+		limitInt, err := strconv.Atoi(limitStr)
+		if err != nil {
+			limitInt = 10
+		}
+		response := ac.as.Teachers(c, offsetInt, limitInt, name, code)
 		http_utils.SuccessHandle(response, c)
 	}
 }
@@ -80,7 +90,17 @@ func (ac *AuthController) GetTeachers() gin.HandlerFunc {
 func (ac *AuthController) GetStudents() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var code, _ = c.GetQuery("code")
-		response := ac.as.Students(c, code)
+		var offsetStr, _ = c.GetQuery("offset")
+		var limitStr, _ = c.GetQuery("limit")
+		offsetInt, err := strconv.Atoi(offsetStr)
+		if err != nil {
+			offsetInt = 0
+		}
+		limitInt, err := strconv.Atoi(limitStr)
+		if err != nil {
+			limitInt = 10
+		}
+		response := ac.as.Students(c, offsetInt, limitInt, code)
 		http_utils.SuccessHandle(response, c)
 	}
 }

@@ -10,9 +10,9 @@ type IExamService interface {
 	CreateExam(ctx context.Context, exam *dtos.UpsertExamRequest) error
 	UpdateExam(ctx context.Context, exam *dtos.UpsertExamRequest) error
 	UpdateExamQuestion(ctx context.Context, question *dtos.UpsertQuestionRequest) error
-	GetAllExams(ctx context.Context) ([]*dtos.ExamListResponse, error)
-	GetExamByCreatorID(ctx context.Context, UserID int) ([]*dtos.ExamListResponse, error)
-	GetExamByTakerID(ctx context.Context, UserID int) ([]*dtos.ExamListResponse, error)
+	GetAllExams(ctx context.Context, offset int, limit int) ([]*dtos.ExamListResponse, error)
+	GetExamByCreatorID(ctx context.Context, offset int, limit int, UserID int) ([]*dtos.ExamListResponse, error)
+	GetExamByTakerID(ctx context.Context, offset int, limit int, UserID int) ([]*dtos.ExamListResponse, error)
 	GetDetailExamRoleUser(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error)
 	GetDetailExamRoleAdmin(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error)
 }
@@ -30,9 +30,9 @@ func (es ExamServiceImpl) GetDetailExamRoleAdmin(ctx context.Context, ID int) (*
 	return dtos.ParseExamDetailAdminRes(examEnts), nil
 }
 
-func (es ExamServiceImpl) GetExamByCreatorID(ctx context.Context, UserID int) ([]*dtos.ExamListResponse, error) {
+func (es ExamServiceImpl) GetExamByCreatorID(ctx context.Context, offset int, limit int, UserID int) ([]*dtos.ExamListResponse, error) {
 	//TODO implement me
-	examEnts, err := es.er.FindExamsByCreatorId(ctx, uint(UserID))
+	examEnts, err := es.er.FindExamsByCreatorId(ctx, offset, limit, uint(UserID))
 	if err != nil {
 		return nil, err
 	}
@@ -44,9 +44,9 @@ func (es ExamServiceImpl) GetExamByCreatorID(ctx context.Context, UserID int) ([
 	return responseExams, nil
 }
 
-func (es ExamServiceImpl) GetExamByTakerID(ctx context.Context, UserID int) ([]*dtos.ExamListResponse, error) {
+func (es ExamServiceImpl) GetExamByTakerID(ctx context.Context, offset, limit, UserID int) ([]*dtos.ExamListResponse, error) {
 	//TODO implement me
-	examEnts, err := es.er.FindExamsByCreatorId(ctx, uint(UserID))
+	examEnts, err := es.er.FindExamsByCreatorId(ctx, offset, limit, uint(UserID))
 	if err != nil {
 		return nil, err
 	}
@@ -67,9 +67,9 @@ func (es ExamServiceImpl) GetDetailExamRoleUser(ctx context.Context, ID int) (*d
 	return dtos.ParseExamDetailRes(examEnts), nil
 }
 
-func (es ExamServiceImpl) GetAllExams(ctx context.Context) ([]*dtos.ExamListResponse, error) {
+func (es ExamServiceImpl) GetAllExams(ctx context.Context, offset int, limit int) ([]*dtos.ExamListResponse, error) {
 	//TODO implement me
-	examEnts, err := es.er.FindAllExams(ctx)
+	examEnts, err := es.er.FindAllExams(ctx, offset, limit)
 	if err != nil {
 		return nil, err
 	}

@@ -94,7 +94,17 @@ func (ec *ExamController) UpdateQuestion() gin.HandlerFunc {
 
 func (ec *ExamController) GetExams() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		exams, err := ec.es.GetAllExams(c)
+		var offsetStr, _ = c.GetQuery("offset")
+		var limitStr, _ = c.GetQuery("limit")
+		offsetInt, err := strconv.Atoi(offsetStr)
+		if err != nil {
+			offsetInt = 0
+		}
+		limitInt, err := strconv.Atoi(limitStr)
+		if err != nil {
+			limitInt = 10
+		}
+		exams, err := ec.es.GetAllExams(c, offsetInt, limitInt)
 		if err != nil {
 			exception.Handle(err, c)
 			return
@@ -145,7 +155,17 @@ func (ec *ExamController) GetExamsByCreatorID() gin.HandlerFunc {
 			exception.Handle(err, c)
 			return
 		}
-		exams, err := ec.es.GetExamByCreatorID(c, creatorID)
+		var offsetStr, _ = c.GetQuery("offset")
+		var limitStr, _ = c.GetQuery("limit")
+		offsetInt, err := strconv.Atoi(offsetStr)
+		if err != nil {
+			offsetInt = 0
+		}
+		limitInt, err := strconv.Atoi(limitStr)
+		if err != nil {
+			limitInt = 10
+		}
+		exams, err := ec.es.GetExamByCreatorID(c, offsetInt, limitInt, creatorID)
 		if err != nil {
 			exception.Handle(err, c)
 			return
@@ -162,7 +182,17 @@ func (ec *ExamController) GetExamByTakerID() gin.HandlerFunc {
 			exception.Handle(err, c)
 			return
 		}
-		exams, err := ec.es.GetExamByTakerID(c, takerID)
+		var offsetStr, _ = c.GetQuery("offset")
+		var limitStr, _ = c.GetQuery("limit")
+		offsetInt, err := strconv.Atoi(offsetStr)
+		if err != nil {
+			offsetInt = 0
+		}
+		limitInt, err := strconv.Atoi(limitStr)
+		if err != nil {
+			limitInt = 10
+		}
+		exams, err := ec.es.GetExamByTakerID(c, offsetInt, limitInt, takerID)
 		if err != nil {
 			exception.Handle(err, c)
 			return

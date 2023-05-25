@@ -11,7 +11,7 @@ type IAuthRepository interface {
 	CreateUser(context.Context, *entities.User) (*entities.User, error)
 	FindUserByEmail(context.Context, string) (*entities.User, error)
 	FindById(context.Context, int) (*entities.User, error)
-	GetUsers(context.Context, int, string, string) []*entities.User
+	GetUsers(context.Context, int, int, int, string, string) []*entities.User
 	UpdateUser(context.Context, *entities.User) error
 }
 
@@ -41,11 +41,11 @@ func (ar AuthRepositoryImpl) UpdateUser(ctx context.Context, user *entities.User
 	return result.Error
 }
 
-func (ar AuthRepositoryImpl) GetUsers(ctx context.Context, role int, name string, code string) []*entities.User {
+func (ar AuthRepositoryImpl) GetUsers(ctx context.Context, role int, offset int, limit int, name string, code string) []*entities.User {
 	//TODO implement me
 	db := repositories.GetConn()
 	var userEntities []*entities.User
-	query := db.Where("role = ?", role).Order("created_at")
+	query := db.Offset(offset).Limit(limit).Where("role = ?", role).Order("created_at")
 	if name != "" {
 		query = query.Where("name LIKE ?", "%"+name+"%")
 	}
