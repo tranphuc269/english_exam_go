@@ -50,10 +50,10 @@ func (ac *AuthController) Register() gin.HandlerFunc {
 		}
 		avatar, err := c.FormFile("file_avatar")
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": "No file uploaded",
-			})
-			return
+			//c.JSON(http.StatusBadRequest, gin.H{
+			//	"message": "No file uploaded",
+			//})
+			//return
 		} else {
 			urls := file.UploadFileToS3([]*multipart.FileHeader{avatar})
 			registerRequest.Avatar = urls[0]
