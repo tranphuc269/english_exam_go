@@ -152,10 +152,9 @@ func (ac *AuthController) Update() gin.HandlerFunc {
 		//}
 		avatar, err := c.FormFile("file_avatar")
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": err,
-			})
-			return
+			//c.JSON(http.StatusBadRequest, gin.H{
+			//	"message": err,
+			//})
 		} else {
 			urls := file.UploadFileToS3([]*multipart.FileHeader{avatar})
 			updateRequest.Avatar = urls[0]
