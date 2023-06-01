@@ -82,8 +82,8 @@ func (ac *AuthController) GetTeachers() gin.HandlerFunc {
 		if err != nil {
 			limitInt = 10
 		}
-		response := ac.as.Teachers(c, offsetInt, limitInt, name, code)
-		http_utils.SuccessHandle(response, c)
+		response, total := ac.as.Teachers(c, offsetInt, limitInt, name, code)
+		http_utils.SuccessHandlePaginate(response, total, c)
 	}
 }
 
@@ -100,8 +100,8 @@ func (ac *AuthController) GetStudents() gin.HandlerFunc {
 		if err != nil {
 			limitInt = 10
 		}
-		response := ac.as.Students(c, offsetInt, limitInt, code)
-		http_utils.SuccessHandle(response, c)
+		response, total := ac.as.Students(c, offsetInt, limitInt, code)
+		http_utils.SuccessHandlePaginate(response, total, c)
 	}
 }
 

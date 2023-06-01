@@ -15,6 +15,15 @@ func SuccessHandle(data interface{}, c *gin.Context) {
 	return
 }
 
+func SuccessHandlePaginate(data interface{}, total int, c *gin.Context) {
+	if data != nil {
+		c.JSON(http.StatusOK, gin.H{"message": "ok", "data": data, "total": total})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"message": "ok"})
+	}
+	return
+}
+
 func CreatedHandle(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"status": "ok"})
 	return

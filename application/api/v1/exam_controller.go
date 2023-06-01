@@ -104,12 +104,12 @@ func (ec *ExamController) GetExams() gin.HandlerFunc {
 		if err != nil {
 			limitInt = 10
 		}
-		exams, err := ec.es.GetAllExams(c, offsetInt, limitInt)
+		exams, total, err := ec.es.GetAllExams(c, offsetInt, limitInt)
 		if err != nil {
 			exception.Handle(err, c)
 			return
 		}
-		http_utils.SuccessHandle(exams, c)
+		http_utils.SuccessHandlePaginate(exams, total, c)
 	}
 }
 
@@ -165,12 +165,12 @@ func (ec *ExamController) GetExamsByCreatorID() gin.HandlerFunc {
 		if err != nil {
 			limitInt = 10
 		}
-		exams, err := ec.es.GetExamByCreatorID(c, offsetInt, limitInt, creatorID)
+		exams, total, err := ec.es.GetExamByCreatorID(c, offsetInt, limitInt, creatorID)
 		if err != nil {
 			exception.Handle(err, c)
 			return
 		}
-		http_utils.SuccessHandle(exams, c)
+		http_utils.SuccessHandlePaginate(exams, total, c)
 	}
 }
 
@@ -192,11 +192,11 @@ func (ec *ExamController) GetExamByTakerID() gin.HandlerFunc {
 		if err != nil {
 			limitInt = 10
 		}
-		exams, err := ec.es.GetExamByTakerID(c, offsetInt, limitInt, takerID)
+		exams, total, err := ec.es.GetExamByTakerID(c, offsetInt, limitInt, takerID)
 		if err != nil {
 			exception.Handle(err, c)
 			return
 		}
-		http_utils.SuccessHandle(exams, c)
+		http_utils.SuccessHandlePaginate(exams, total, c)
 	}
 }

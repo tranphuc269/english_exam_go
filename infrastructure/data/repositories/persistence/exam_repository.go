@@ -14,11 +14,20 @@ type IExamRepository interface {
 	UpdateQuestion(context.Context, *entities.ExamQuestion) error
 	FindExamById(context.Context, uint) (*entities.Exam, error)
 	FindAllExams(ctx context.Context, offset int, limit int) ([]*entities.Exam, error)
-	FindExamsByCreatorId(context.Context, int, int, uint) ([]*entities.Exam, error)
-	FindExamsByTaskerId(context.Context, int, int, uint) ([]*entities.Exam, error)
+	CountTotal(ctx context.Context) int
+	FindExamsByCreatorId(context.Context, int, int, uint) ([]*entities.Exam, int, error)
+	FindExamsByTaskerId(context.Context, int, int, uint) ([]*entities.Exam, int, error)
 }
 
 type ExamRepository struct {
+}
+
+func (er ExamRepository) CountTotal(ctx context.Context) int {
+	//TODO implement me
+	db := repositories.GetConn()
+	var count int64
+	_ = db.Table("exams").Count(&count)
+	return int(count)
 }
 
 func (er ExamRepository) FindAllExams(ctx context.Context, offset int, limit int) ([]*entities.Exam, error) {
@@ -112,23 +121,30 @@ func (er ExamRepository) FindExamById(ctx context.Context, ID uint) (*entities.E
 	return examEnt, err.Error
 }
 
-func (er ExamRepository) FindExamsByCreatorId(ctx context.Context, offset int, limit int, UserID uint) ([]*entities.Exam, error) {
+func (er ExamRepository) FindExamsByCreatorId(ctx context.Context, offset int, limit int, UserID uint) ([]*entities.Exam, int, error) {
 	//TODO implement me
 	db := repositories.GetConn()
-	var exams []*entities.Exam
-	result := db.Offset(offset).Limit(limit).Where("creator_id=?", UserID).Order("created_at").Find(&exams)
-	return exams, result.Error
+	var exams1 []*entities.Exam
+	var exams2 []*entities.Exam
+	result := db.Offset(offset).Limit(limit).Where("creator_id=?", UserID).Order("created_at").Find(&exams1)
+	_ = db.Where("creator_id=?", UserID).Order("created_at").Find(&exams2)
+	return exams1, len(exams2), result.Error
 }
 
-func (er ExamRepository) FindExamsByTaskerId(ctx context.Context, offset int, limit int, UserID uint) ([]*entities.Exam, error) {
+func (er ExamRepository) FindExamsByTaskerId(ctx context.Context, offset int, limit int, UserID uint) ([]*entities.Exam, int, error) {
 	//TODO implement me
 	db := repositories.GetConn()
-	var exams []*entities.Exam
+	var exams1 []*entities.Exam
+	var exams2 []*entities.Exam
 	result := db.Offset(offset).Limit(limit).Table("exams").Select("exam.*").
 		Joins("JOIN exam_takers ON exams.id = exam_takers.exam_id").
 		Where("exam_takers.user_id = ?", UserID).
-		Find(&exams)
-	return exams, result.Error
+		Find(&exams1)
+	_ = db.Offset(offset).Limit(limit).Table("exams").Select("exam.*").
+		Joins("JOIN exam_takers ON exams.id = exam_takers.exam_id").
+		Where("exam_takers.user_id = ?", UserID).
+		Find(&exams2)
+	return exams1, len(exams2), result.Error
 }
 
 func CreateExamRepository() IExamRepository {
