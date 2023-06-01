@@ -166,3 +166,19 @@ func (ac *AuthController) Update() gin.HandlerFunc {
 		http_utils.SuccessHandle(true, c)
 	}
 }
+
+func (ac *AuthController) DeleteUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var params = c.Param("id")
+		ID, err := strconv.Atoi(params)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		err = ac.as.DeleteUser(c, ID)
+		if err != nil {
+			exception.Handle(err, c)
+		}
+		http_utils.SuccessHandle(true, c)
+	}
+}

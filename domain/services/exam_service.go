@@ -15,10 +15,16 @@ type IExamService interface {
 	GetExamByTakerID(ctx context.Context, offset int, limit int, UserID int) ([]*dtos.ExamListResponse, int, error)
 	GetDetailExamRoleUser(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error)
 	GetDetailExamRoleAdmin(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error)
+	DeleteExam(ctx context.Context, ID int) error
 }
 
 type ExamServiceImpl struct {
 	er persistence.IExamRepository
+}
+
+func (es ExamServiceImpl) DeleteExam(ctx context.Context, ID int) error {
+	//TODO implement me
+	return es.er.DeleteExam(ctx, ID)
 }
 
 func (es ExamServiceImpl) GetDetailExamRoleAdmin(ctx context.Context, ID int) (*dtos.ExamDetailResponse, error) {

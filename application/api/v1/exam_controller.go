@@ -200,3 +200,20 @@ func (ec *ExamController) GetExamByTakerID() gin.HandlerFunc {
 		http_utils.SuccessHandlePaginate(exams, total, c)
 	}
 }
+
+func (ec *ExamController) DeleteExam() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var params = c.Param("id")
+		id, err := strconv.Atoi(params)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		err = ec.es.DeleteExam(c, id)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		http_utils.SuccessHandle(nil, c)
+	}
+}

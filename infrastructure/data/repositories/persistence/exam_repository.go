@@ -17,9 +17,17 @@ type IExamRepository interface {
 	CountTotal(ctx context.Context) int
 	FindExamsByCreatorId(context.Context, int, int, uint) ([]*entities.Exam, int, error)
 	FindExamsByTaskerId(context.Context, int, int, uint) ([]*entities.Exam, int, error)
+	DeleteExam(context.Context, int) error
 }
 
 type ExamRepository struct {
+}
+
+func (er ExamRepository) DeleteExam(ctx context.Context, id int) error {
+	//TODO implement me
+	db := repositories.GetConn()
+	result := db.Where("id = ?", id).Delete(&entities.Exam{})
+	return result.Error
 }
 
 func (er ExamRepository) CountTotal(ctx context.Context) int {

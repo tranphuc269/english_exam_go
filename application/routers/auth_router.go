@@ -22,6 +22,7 @@ func (ar AuthRouter) routing(e *gin.RouterGroup) {
 		{
 			secured.GET("/me", ar.ac.Me())
 			secured.PUT("/update", ar.ac.Update())
+			secured.DELETE("/:id", ar.ac.DeleteUser())
 			secured.GET("/user/:id", ar.ac.UserDetail())
 		}
 	}

@@ -13,9 +13,17 @@ type IAuthRepository interface {
 	FindById(context.Context, int) (*entities.User, error)
 	GetUsers(context.Context, int, int, int, string, string) ([]*entities.User, int)
 	UpdateUser(context.Context, *entities.User) error
+	DeleteUser(context.Context, int) error
 }
 
 type AuthRepositoryImpl struct {
+}
+
+func (ar AuthRepositoryImpl) DeleteUser(ctx context.Context, id int) error {
+	//TODO implement me
+	db := repositories.GetConn()
+	result := db.Where("id = ?", id).Delete(&entities.User{})
+	return result.Error
 }
 
 func (ar AuthRepositoryImpl) FindById(ctx context.Context, ID int) (*entities.User, error) {

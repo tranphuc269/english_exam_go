@@ -17,11 +17,17 @@ type IAuthService interface {
 	Update(context.Context, dtos.UpdateAccountRequest, string) error
 	Teachers(context.Context, int, int, string, string) ([]*dtos.UserResponse, int)
 	Students(context.Context, int, int, string) ([]*dtos.UserResponse, int)
+	DeleteUser(context.Context, int) error
 }
 
 type AuthServiceImpl struct {
 	ar persistence.IAuthRepository
 	//fs FileSer
+}
+
+func (as AuthServiceImpl) DeleteUser(ctx context.Context, id int) error {
+	//TODO implement me
+	return as.ar.DeleteUser(ctx, id)
 }
 
 func (as AuthServiceImpl) FindById(ctx context.Context, ID int) (*dtos.UserResponse, error) {
