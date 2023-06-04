@@ -18,9 +18,19 @@ type IExamRepository interface {
 	FindExamsByCreatorId(context.Context, int, int, uint) ([]*entities.Exam, int, error)
 	FindExamsByTaskerId(context.Context, int, int, uint) ([]*entities.Exam, int, error)
 	DeleteExam(context.Context, int) error
+	GetParticipants(context.Context, int) ([]entities.User, error)
 }
 
 type ExamRepository struct {
+}
+
+func (er ExamRepository) GetParticipants(ctx context.Context, examId int) ([]entities.User, error) {
+	//TODO implement me
+	db := repositories.GetConn()
+
+	var exam *entities.Exam
+	err := db.Preload("ExamTakers").First(&exam, examId).Error
+	return exam.ExamTakers, err
 }
 
 func (er ExamRepository) DeleteExam(ctx context.Context, id int) error {

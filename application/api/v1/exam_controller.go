@@ -217,3 +217,19 @@ func (ec *ExamController) DeleteExam() gin.HandlerFunc {
 		http_utils.SuccessHandle(nil, c)
 	}
 }
+func (ec *ExamController) GetParticipants() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var params = c.Param("id")
+		id, err := strconv.Atoi(params)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		users, err := ec.es.GetParticipants(c, id)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		http_utils.SuccessHandle(users, c)
+	}
+}

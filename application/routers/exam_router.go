@@ -20,6 +20,7 @@ func (er ExamRouter) routing(e *gin.RouterGroup) {
 		be.GET("/admin/:id", er.ec.GetDetailExamRoleAdmin())
 		be.GET("/creators/:id", er.ec.GetExamsByCreatorID())
 		be.GET("/takers/:id", er.ec.GetExamsByCreatorID())
+		be.GET("/participants/:id", er.ec.GetParticipants())
 		be.POST("/file", file.UploadFile)
 
 		secured := be.Group("/secured").Use(middleware.Authentication())
