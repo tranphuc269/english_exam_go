@@ -10,9 +10,18 @@ import (
 type IExamResultRepository interface {
 	SubmitExam(ctx context.Context, result *entities.ExamResult) (*dtos.ExamResultRes, error)
 	GetListExamByTakerID(ctx context.Context, TakerID int) []*entities.ExamResult
+	GetAllResult(ctx context.Context) []*entities.ExamResult
 }
 
 type ExamResultRepositoryImpl struct {
+}
+
+func (e ExamResultRepositoryImpl) GetAllResult(ctx context.Context) []*entities.ExamResult {
+	//TODO implement me
+	db := repositories.GetConn()
+	var examDone []*entities.ExamResult
+	_ = db.Order("created_at").Find(&examDone)
+	return examDone
 }
 
 func (e ExamResultRepositoryImpl) GetListExamByTakerID(ctx context.Context, TakerID int) []*entities.ExamResult {

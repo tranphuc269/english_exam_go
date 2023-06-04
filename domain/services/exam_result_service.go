@@ -12,11 +12,33 @@ import (
 type IExamResultService interface {
 	SubmitExam(ctx context.Context, submitRequest dtos.CreateExamSubmit) (*dtos.ExamResultRes, error)
 	GetYourExamDone(ctx context.Context, UserID int) []*dtos.ExamResultRes
+	GetAllResult(ctx context.Context) []*dtos.ExamResultRes
 }
 
 type ExamResultServiceImpl struct {
 	err persistence.IExamResultRepository
 	er  persistence.IExamRepository
+}
+
+func (ers ExamResultServiceImpl) GetAllResult(ctx context.Context) []*dtos.ExamResultRes {
+	//TODO implement me
+	examDoneEnts := ers.err.GetAllResult(ctx)
+	var results []*dtos.ExamResultRes
+	for _, ent := range examDoneEnts {
+		results = append(results, &dtos.ExamResultRes{
+			ID:                  int(ent.ID),
+			CreatedAt:           ent.CreatedAt,
+			UpdatedAt:           ent.UpdatedAt,
+			ExamID:              ent.ExamId,
+			TotalScore:          ent.TotalScore,
+			ReadingScore:        ent.ReadingScore,
+			ListeningScore:      ent.ListeningScore,
+			NumCorrectReading:   ent.NumCorrectReading,
+			NumCorrectListening: ent.NumCorrectListening,
+			TabSwitchCount:      ent.TabSwitchCount,
+		})
+	}
+	return results
 }
 
 func (ers ExamResultServiceImpl) GetYourExamDone(ctx context.Context,
