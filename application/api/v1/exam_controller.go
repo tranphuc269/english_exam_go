@@ -6,7 +6,9 @@ import (
 	dtos "english_exam_go/domain/dtos/exam"
 	"english_exam_go/domain/services"
 	auth_utils "english_exam_go/utils/auth"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/smtp"
 	"strconv"
 	"strings"
 )
@@ -231,5 +233,51 @@ func (ec *ExamController) GetParticipants() gin.HandlerFunc {
 			return
 		}
 		http_utils.SuccessHandle(users, c)
+	}
+}
+func (ec *ExamController) Invite() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var params = c.Param("id")
+		id, err := strconv.Atoi(params)
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+		users, err := ec.es.GetParticipants(c, id)
+		emails := make([]string, len(users))
+		for i, user := range users {
+			emails[i] = user.Email
+		}
+		from := "phuc260900@gmail.com"
+		password := "rlumoybczfmptyqc"
+
+		host := "smtp.gmail.com"
+
+		port := "587"
+
+		msg := "Xin chào, vui lòng click link : http://localhost:3000/student/exam/" + strconv.Itoa(id) + ", để tham gia bài thi."
+
+		body := []byte(msg)
+
+		// PlainAuth uses the given username and password to
+		// authenticate to host and act as identity.
+		// Usually identity should be the empty string,
+		// to act as username.
+		auth := smtp.PlainAuth("", from, password, host)
+
+		// SendMail uses TLS connection to send the mail
+		// The email is sent to all address in the toList,
+		// the body should be of type bytes, not strings
+		// This returns error if any occurred.
+		err = smtp.SendMail(host+":"+port, auth, from, emails, body)
+
+		// handling the errors
+		if err != nil {
+			exception.Handle(err, c)
+			return
+		}
+
+		fmt.Println("Successfully sent mail to all user in toList")
+		http_utils.SuccessHandle(nil, c)
 	}
 }
