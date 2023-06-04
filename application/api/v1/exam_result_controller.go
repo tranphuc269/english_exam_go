@@ -50,12 +50,11 @@ func (esc ExamResultController) GetListExamHaveSubmit() gin.HandlerFunc {
 
 func (esc ExamResultController) GetAllResult() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		userId, _ := auth_utils.GetUserIdFromToken(c)
 		//if err != nil {
 		//	domain_exception.Handle(err, c)
 		//	return
 		//}
-		exams := esc.ess.GetYourExamDone(c, userId)
+		exams := esc.ess.GetAllResult(c)
 		fmt.Println(exams)
 		http_utils.SuccessHandle(exams, c)
 	}
