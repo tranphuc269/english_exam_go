@@ -29,8 +29,17 @@ func (er ExamRepository) GetParticipants(ctx context.Context, examId int) ([]ent
 	db := repositories.GetConn()
 
 	var exam *entities.Exam
-	err := db.Preload("ExamTakers").First(&exam, examId).Error
-	return exam.ExamTakers, err
+	var examTakers []entities.User
+
+	db.Where("id = ?", examId).Preload("ExamTakers").First(&exam)
+	err := db.Model(&exam).Association("ExamTakers").Find(&examTakers)
+	if err != nil {
+		return nil, err
+	}
+
+	examTakers = exam.ExamTakers
+	fmt.Printf("examTakers : %d\n", len(examTakers))
+	return examTakers, nil
 }
 
 func (er ExamRepository) DeleteExam(ctx context.Context, id int) error {

@@ -255,9 +255,11 @@ func (ec *ExamController) Invite() gin.HandlerFunc {
 
 		port := "587"
 
-		msg := "Xin chào, vui lòng click link : http://localhost:3000/student/exam/" + strconv.Itoa(id) + ", để tham gia bài thi."
-
-		body := []byte(msg)
+		subject := "Thư mời tham gia bài thi\n"
+		mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
+		body := "http://localhost:3000/student/exam/" + strconv.Itoa(id)
+		msg := []byte(subject + mime + body)
+		fmt.Printf("msg : %s\n", msg)
 
 		// PlainAuth uses the given username and password to
 		// authenticate to host and act as identity.
@@ -269,7 +271,7 @@ func (ec *ExamController) Invite() gin.HandlerFunc {
 		// The email is sent to all address in the toList,
 		// the body should be of type bytes, not strings
 		// This returns error if any occurred.
-		err = smtp.SendMail(host+":"+port, auth, from, emails, body)
+		err = smtp.SendMail(host+":"+port, auth, from, emails, msg)
 
 		// handling the errors
 		if err != nil {
