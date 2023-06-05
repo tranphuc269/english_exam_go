@@ -10,17 +10,22 @@ import (
 type IExamResultRepository interface {
 	SubmitExam(ctx context.Context, result *entities.ExamResult) (*dtos.ExamResultRes, error)
 	GetListExamByTakerID(ctx context.Context, TakerID int) []*entities.ExamResult
-	GetAllResult(ctx context.Context) []*entities.ExamResult
+	GetAllResult(ctx context.Context, examId int) []*entities.ExamResult
 }
 
 type ExamResultRepositoryImpl struct {
 }
 
-func (e ExamResultRepositoryImpl) GetAllResult(ctx context.Context) []*entities.ExamResult {
+func (e ExamResultRepositoryImpl) GetAllResult(ctx context.Context, examId int) []*entities.ExamResult {
 	//TODO implement me
 	db := repositories.GetConn()
 	var examDone []*entities.ExamResult
-	_ = db.Order("created_at").Find(&examDone)
+	if examId != -1 {
+		_ = db.Where("exam_id = ?", examId).Order("created_at").Find(&examDone)
+	} else {
+		_ = db.Order("created_at").Find(&examDone)
+
+	}
 	return examDone
 }
 

@@ -8,6 +8,7 @@ import (
 	auth_utils "english_exam_go/utils/auth"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"strconv"
 	"strings"
 )
 
@@ -54,7 +55,12 @@ func (esc ExamResultController) GetAllResult() gin.HandlerFunc {
 		//	domain_exception.Handle(err, c)
 		//	return
 		//}
-		exams := esc.ess.GetAllResult(c)
+		var examIdStr, _ = c.GetQuery("examId")
+		examId, err := strconv.Atoi(examIdStr)
+		if err != nil {
+			examId = -1
+		}
+		exams := esc.ess.GetAllResult(c, examId)
 		fmt.Println(exams)
 		http_utils.SuccessHandle(exams, c)
 	}
