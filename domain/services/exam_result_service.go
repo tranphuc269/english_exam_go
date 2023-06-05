@@ -2,7 +2,8 @@ package services
 
 import (
 	"context"
-	dtos "english_exam_go/domain/dtos/exam"
+	dtosExam "english_exam_go/domain/dtos/exam"
+	dtosUser "english_exam_go/domain/dtos/user"
 	"english_exam_go/infrastructure/data/entities"
 	"english_exam_go/infrastructure/data/repositories/persistence"
 	"english_exam_go/utils/resource"
@@ -10,26 +11,30 @@ import (
 )
 
 type IExamResultService interface {
-	SubmitExam(ctx context.Context, submitRequest dtos.CreateExamSubmit) (*dtos.ExamResultRes, error)
-	GetYourExamDone(ctx context.Context, UserID int) []*dtos.ExamResultRes
-	GetAllResult(ctx context.Context) []*dtos.ExamResultRes
+	SubmitExam(ctx context.Context, submitRequest dtosExam.CreateExamSubmit) (*dtosExam.ExamResultRes, error)
+	GetYourExamDone(ctx context.Context, UserID int) []*dtosExam.ExamResultRes
+	GetAllResult(ctx context.Context) []*dtosExam.ExamResultRes
 }
 
 type ExamResultServiceImpl struct {
 	err persistence.IExamResultRepository
 	er  persistence.IExamRepository
+	ar  persistence.IAuthRepository
 }
 
-func (ers ExamResultServiceImpl) GetAllResult(ctx context.Context) []*dtos.ExamResultRes {
+func (ers ExamResultServiceImpl) GetAllResult(ctx context.Context) []*dtosExam.ExamResultRes {
 	//TODO implement me
 	examDoneEnts := ers.err.GetAllResult(ctx)
-	var results []*dtos.ExamResultRes
+	var results []*dtosExam.ExamResultRes
 	for _, ent := range examDoneEnts {
-		results = append(results, &dtos.ExamResultRes{
+		userEnt, _ := ers.ar.FindById(ctx, ent.UserId)
+		userRes := dtosUser.UserEntToResponse(userEnt)
+		results = append(results, &dtosExam.ExamResultRes{
 			ID:                  int(ent.ID),
 			CreatedAt:           ent.CreatedAt,
 			UpdatedAt:           ent.UpdatedAt,
 			ExamID:              ent.ExamId,
+			User:                *userRes,
 			TotalScore:          ent.TotalScore,
 			ReadingScore:        ent.ReadingScore,
 			ListeningScore:      ent.ListeningScore,
@@ -42,12 +47,12 @@ func (ers ExamResultServiceImpl) GetAllResult(ctx context.Context) []*dtos.ExamR
 }
 
 func (ers ExamResultServiceImpl) GetYourExamDone(ctx context.Context,
-	UserID int) []*dtos.ExamResultRes {
+	UserID int) []*dtosExam.ExamResultRes {
 	//TODO implement me
 	examDoneEnts := ers.err.GetListExamByTakerID(ctx, UserID)
-	var results []*dtos.ExamResultRes
+	var results []*dtosExam.ExamResultRes
 	for _, ent := range examDoneEnts {
-		results = append(results, &dtos.ExamResultRes{
+		results = append(results, &dtosExam.ExamResultRes{
 			ID:                  int(ent.ID),
 			CreatedAt:           ent.CreatedAt,
 			UpdatedAt:           ent.UpdatedAt,
@@ -64,7 +69,7 @@ func (ers ExamResultServiceImpl) GetYourExamDone(ctx context.Context,
 }
 
 func (ers ExamResultServiceImpl) SubmitExam(ctx context.Context,
-	submitRequest dtos.CreateExamSubmit) (*dtos.ExamResultRes, error) {
+	submitRequest dtosExam.CreateExamSubmit) (*dtosExam.ExamResultRes, error) {
 	//TODO implement me
 
 	numCorrectReading := 0
@@ -106,9 +111,10 @@ func (ers ExamResultServiceImpl) SubmitExam(ctx context.Context,
 }
 
 func CreateExamResultService(err persistence.IExamResultRepository,
-	er persistence.IExamRepository) IExamResultService {
+	er persistence.IExamRepository, ar persistence.IAuthRepository) IExamResultService {
 	return &ExamResultServiceImpl{
 		err: err,
 		er:  er,
+		ar:  ar,
 	}
 }
