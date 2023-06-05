@@ -4,6 +4,7 @@ import (
 	"english_exam_go/infrastructure/data/entities"
 	"english_exam_go/utils/resource"
 	"gorm.io/gorm"
+	"sort"
 	"time"
 )
 
@@ -172,6 +173,9 @@ func ParseListQuestionResponse(questions []entities.ExamQuestion) []QuestionResp
 	for _, ques := range questions {
 		questionResponse = append(questionResponse, *ParseQuestionResponse(&ques))
 	}
+	sort.Slice(questionResponse, func(i, j int) bool {
+		return questionResponse[i].ID < questionResponse[j].ID
+	})
 	return questionResponse
 }
 
@@ -219,6 +223,9 @@ func ParseListQuestionAdminResponse(questions []entities.ExamQuestion) []Questio
 	for _, ques := range questions {
 		questionResponse = append(questionResponse, *ParseQuestionAdminResponse(&ques))
 	}
+	sort.Slice(questionResponse, func(i, j int) bool {
+		return questionResponse[i].ID < questionResponse[j].ID
+	})
 	return questionResponse
 }
 
