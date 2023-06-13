@@ -13,7 +13,7 @@ import (
 type IExamResultService interface {
 	SubmitExam(ctx context.Context, submitRequest dtosExam.CreateExamSubmit) (*dtosExam.ExamResultRes, error)
 	GetYourExamDone(ctx context.Context, UserID int) []*dtosExam.ExamResultRes
-	GetAllResult(ctx context.Context, examId int) []*dtosExam.ExamResultRes
+	GetAllResult(ctx context.Context, examId int, score int) []*dtosExam.ExamResultRes
 }
 
 type ExamResultServiceImpl struct {
@@ -22,9 +22,9 @@ type ExamResultServiceImpl struct {
 	ar  persistence.IAuthRepository
 }
 
-func (ers ExamResultServiceImpl) GetAllResult(ctx context.Context, examId int) []*dtosExam.ExamResultRes {
+func (ers ExamResultServiceImpl) GetAllResult(ctx context.Context, examId int, score int) []*dtosExam.ExamResultRes {
 	//TODO implement me
-	examDoneEnts := ers.err.GetAllResult(ctx, examId)
+	examDoneEnts := ers.err.GetAllResult(ctx, examId, score)
 	var results []*dtosExam.ExamResultRes
 	for _, ent := range examDoneEnts {
 		userEnt, _ := ers.ar.FindById(ctx, ent.UserId)

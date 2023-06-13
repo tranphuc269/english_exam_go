@@ -56,11 +56,16 @@ func (esc ExamResultController) GetAllResult() gin.HandlerFunc {
 		//	return
 		//}
 		var examIdStr, _ = c.GetQuery("examId")
+		var scoreStr, _ = c.GetQuery("score")
 		examId, err := strconv.Atoi(examIdStr)
 		if err != nil {
 			examId = -1
 		}
-		exams := esc.ess.GetAllResult(c, examId)
+		score, err := strconv.Atoi(scoreStr)
+		if err != nil {
+			score = -1
+		}
+		exams := esc.ess.GetAllResult(c, examId, score)
 		fmt.Println(exams)
 		http_utils.SuccessHandle(exams, c)
 	}
